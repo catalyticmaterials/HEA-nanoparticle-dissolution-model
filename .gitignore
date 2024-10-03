@@ -165,9 +165,10 @@ cython_debug/
 
 # ignore directories with old script versions
 old/
-.pov
-.ini
-.bak
 
+*_old/
 # ignore povray files
 
+*.pov
+*.ini
+*.bak
