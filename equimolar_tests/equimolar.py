@@ -4,6 +4,7 @@ import numpy as np
 from tqdm import tqdm
 from ase.visualize import view
 from multiprocessing import Pool
+import os
 
 n=200
 N=1289
@@ -21,7 +22,7 @@ def dissolve(i):
     np.random.seed(i)
     dissolver.make_particle(composition,n_atoms=N)
     
-    atoms, dissolved_atoms = dissolver.dissolve_atoms(0.8,relax_cn=True)
+    atoms, dissolved_atoms = dissolver.dissolve_atoms_batch(0.8,relax_func=dissolver.relax_particle_batch_cn)
 
     diss_comp = dissolver.get_composition(dissolved_atoms,precision=6)[1]
 
@@ -33,8 +34,7 @@ def dissolve(i):
     return np.concatenate((final_111_comp, diss_comp, [s]))
 
 if __name__ == '__main__':
-    
-    with Pool(4) as pool:
+    with Pool(32) as pool:
         results = list(tqdm(pool.imap(dissolve,range(n)),total=n, desc= 'Processing'))
 
     results = np.array(results)
@@ -46,7 +46,6 @@ if __name__ == '__main__':
     data = np.hstack((final_111_compositions,dissolution_compositions,dissolution_factors.reshape(-1,1)))
 
     np.savetxt('equimolar35A_muM_results.csv',data,delimiter=',',header='111 composition, dissolution composition, dissoluton factor',fmt='%1.6f')
-
         
 
 
