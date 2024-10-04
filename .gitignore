@@ -172,3 +172,8 @@ old/
 *.pov
 *.ini
 *.bak
+
+
+*.sl
+*.log
+*.err

@@ -44,6 +44,7 @@ class Dissolver():
 
         self.U_dict = U_dict
         
+        
 
     def dummy_particle(self,n_atoms=1289,surfaces = [(1, 1, 1),(1,0,0)],energies=[1.,1.]):
         return wulff_construction('Pt', surfaces, energies, n_atoms,'fcc',rounding='closest')
@@ -490,7 +491,7 @@ class Dissolver():
             if n_nb==0:
                 relax_atom_id.append(None)
                 relax_to_id.append(i)
-                improvements.append(-np.inf)
+                improvements.append(-100)
                 neighbors.append([])
                 continue
 
@@ -532,7 +533,7 @@ class Dissolver():
             if n_nb==0:
                 relax_atom_id[i] = None
                 relax_to_id[i] = i
-                improvements[i] -np.inf
+                improvements[i] = -100
                 neighbors[i] = []
                 continue
 
@@ -553,7 +554,7 @@ class Dissolver():
             # if best_improvement<0:
             # Choose neighbor to move by max improvement. Choose randomly out of all with max improvement.
             idx = np.random.choice(neighbor_ids[np.array(d_CN)==best_improvement])
-    
+
             # Save the neighbor to move, to where and its improvement
             relax_atom_id[i]=idx
             relax_to_id[i] = i
@@ -565,7 +566,8 @@ class Dissolver():
         return improvements, relax_atom_id,relax_to_id,neighbors
 
 
-    def relax_particle_batch_cn(self,atoms,cn,nl,dEs,symbols, free_positions,trajectory):
+    def relax_particle_batch_cn(self,atoms,cn,nl,symbols, free_positions,trajectory):
+        np.random.shuffle(free_positions)
         atom_ids=np.arange(len(atoms))
 
         improvements,relax_atom_id,relax_to_id,neighbors = self.get_cn_improvements(atoms,free_positions,cn,atom_ids,symbols)
@@ -575,21 +577,23 @@ class Dissolver():
         relax_atom_id = np.array(relax_atom_id,dtype='object')
         relax_to_id = np.array(relax_to_id,dtype='object')
         # moved_atoms = np.empty(0)
+
         while np.any(relax_mask):
 
 
             atoms_to_relax = []
             fps_to_occupy = []
             # new_neighbors = []
-            update_ids = []
+            update_atom_ids = []
+            
             for i in sort_ids[relax_mask]:
-
-                if np.any(np.isin(neighbors[i],update_ids)):
+                
+                if np.any(np.isin(neighbors[i],update_atom_ids)):
                     pass
                 else:
                     atoms_to_relax.append(relax_atom_id[i])
                     fps_to_occupy.append(relax_to_id[i])
-                    update_ids = np.unique(np.concatenate((update_ids,neighbors[i],nl.get_neighbors(relax_atom_id[i])[0])))
+                    update_atom_ids = np.unique(np.concatenate((update_atom_ids,neighbors[i],nl.get_neighbors(relax_atom_id[i])[0])))
 
 
             # print(atoms_to_relax,improvements[sort_ids][relax_mask])
@@ -609,8 +613,8 @@ class Dissolver():
 
             # update_ids = np.unique(np.append(old_neighbors,np.concatenate([neighbor_ids for relax_bool,neighbor_ids in zip(relax_mask,neighbors) if relax_bool])))
             # update_ids = np.unique(np.append(old_neighbors,new_neighbors))
-            update_ids = np.asarray(update_ids,dtype=int)
-            cn,nl = self.update_cn(atoms,update_ids,nl,cn)
+            update_atom_ids = np.asarray(update_atom_ids,dtype=int)
+            cn,nl = self.update_cn(atoms,update_atom_ids,nl,cn)
             
             if trajectory is not None:
                 trajectory.write(atoms)
@@ -618,24 +622,28 @@ class Dissolver():
             affected_fp_nfp = np.concatenate([np.where(np.linalg.norm(free_positions-new_free_position,axis=1)<=self.nb_dist)[0] for new_free_position in new_free_positions])
             affected_fp_ofp = np.concatenate([np.where(np.linalg.norm(free_positions-atoms.positions[atom_to_relax],axis=1)<=self.nb_dist)[0] for atom_to_relax in atoms_to_relax])
             
-            update_ids = np.unique(np.append(affected_fp_nfp,affected_fp_ofp))
+            update_fp_ids = np.unique(np.append(affected_fp_nfp,affected_fp_ofp))
 
-            improvements, relax_atom_id,relax_to_id,neighbors = self.update_cn_improvements(atoms,update_ids,atom_ids,free_positions,cn,improvements,relax_to_id,relax_atom_id,neighbors)
+            improvements, relax_atom_id,relax_to_id,neighbors = self.update_cn_improvements(atoms,update_fp_ids,atom_ids,free_positions,cn,improvements,relax_to_id,relax_atom_id,neighbors)
+            
+
             
             sort_ids = np.argsort(-improvements)
             relax_mask = improvements[sort_ids]>0
             # moved_mask = np.isin(relax_atom_id[sort_ids],moved_atoms)
             # relax_mask[moved_mask] = False
+
+            
             
 
         mask = np.array([np.sum(np.linalg.norm(atoms.positions - free_position,axis=1)<=self.nb_dist)>=3 for free_position in free_positions])
         free_positions = free_positions[mask]
 
-        return atoms, cn, nl, dEs, free_positions, True
+        return atoms, cn, nl, free_positions
     
 
-    def relax_particle_single_cn(self,atoms,cn,nl,dEs,symbols, free_positions,trajectory):
-
+    def relax_particle_single_cn(self,atoms,cn,nl,symbols, free_positions,trajectory):
+        np.random.shuffle(free_positions)
         atom_ids=np.arange(len(atoms))
         
         improvements,relax_atom_id,relax_to_id,neighbors = self.get_cn_improvements(atoms,free_positions,cn,atom_ids,symbols)
@@ -686,7 +694,7 @@ class Dissolver():
         free_positions = free_positions[mask]
         
 
-        return atoms, cn, nl, dEs, free_positions, True
+        return atoms, cn, nl, free_positions
 
 
 
@@ -745,20 +753,24 @@ class Dissolver():
         surface_ids = ids[surface_mask]
         surface_symbols = np.array(symbols)[surface_mask]
 
-        dEs = np.zeros(len(atoms)) + np.inf
+        # dEs = np.zeros(len(atoms)) + np.inf
 
         # get featuers of surface atoms
         features = self.feature_generator(nl,surface_ids,symbols,coordination_numbers)
 
-        dEs[surface_mask] = self.get_dE(surface_symbols,features)
+        # dEs[surface_mask] = self.get_dE(surface_symbols,features)
+        dEs = self.get_dE(surface_symbols,features)
 
         while len(atoms)>0:
             
-            # get dissolution potentials
-            dissolution_potentials = self.get_Udiss(surface_symbols,dEs[surface_mask])
-        
-            # Dissolve atoms where U_diss<U
-            remove_ids = surface_ids[dissolution_potentials<applied_potential]
+            if len(dEs)>0:
+                # get dissolution potentials
+                dissolution_potentials = self.get_Udiss(surface_symbols,dEs)
+            
+                # Dissolve atoms where U_diss<U
+                remove_ids = surface_ids[dissolution_potentials<applied_potential]
+            else:
+                remove_ids = np.empty(0,dtype=int)
 
             # Dissolve atoms with lower CN than included in model
             if np.any(coordination_numbers<self.min_cn):
@@ -774,46 +786,24 @@ class Dissolver():
                 removed_atoms = np.append(removed_atoms,symbols[remove_ids])
                 # Dissolve atoms by deleting them from ASE atoms object
                 del atoms[remove_ids]
-
                 symbols = np.delete(symbols,remove_ids)
                 ids = np.arange(len(atoms))
 
                 if traj_file is not None:
                     trajectory.write(atoms)
 
-
+                # Get new CN
                 coordination_numbers,nl = self.get_coordination_numbers(atoms,True)
-
-                # Mask of atoms on surface to calculate
-                surface_mask = (coordination_numbers<=self.max_cn)*(coordination_numbers>=self.min_cn)
-                dEs = np.zeros(len(atoms)) + np.inf
-                
-                
-                surface_ids = ids[surface_mask]
-                surface_symbols = symbols[surface_mask]
-
-                if np.sum(surface_mask)>0:
-                    # get featuers of surface atoms
-                    features = self.feature_generator(nl,surface_ids,symbols,coordination_numbers)
-
-                    dEs[surface_mask] = self.get_dE(surface_symbols,features)
 
 
                 # relax particle?
                 if relax_func is not None:
-                    np.random.shuffle(free_positions)
-                    atoms, coordination_numbers, nl, dEs, free_positions, update_dE = relax_func(atoms,coordination_numbers,nl,dEs,symbols,free_positions,trajectory)
-                    # surface_mask = (coordination_numbers<=self.max_cn)*(coordination_numbers>=self.min_cn)
-                    # surface_ids = ids[surface_mask]
-                    # surface_symbols = symbols[surface_mask]
-                    # if update_dE:
-                    #     # get featuers of surface atoms
-                    #     features = self.feature_generator(nl,surface_ids,symbols,coordination_numbers)
-                    #     dEs[surface_mask] = self.get_dE(surface_symbols,features)
+                    atoms, coordination_numbers, nl, free_positions  = relax_func(atoms,coordination_numbers,nl,symbols,free_positions,trajectory)
+
 
                 # Mask of atoms on surface to calculate
                 surface_mask = (coordination_numbers<=self.max_cn)*(coordination_numbers>=self.min_cn)
-                dEs = np.zeros(len(atoms)) + np.inf
+                # dEs = np.zeros(len(atoms)) + np.inf
                 
                 
                 surface_ids = ids[surface_mask]
@@ -823,7 +813,10 @@ class Dissolver():
                     # get featuers of surface atoms
                     features = self.feature_generator(nl,surface_ids,symbols,coordination_numbers)
 
-                    dEs[surface_mask] = self.get_dE(surface_symbols,features)
+                    # dEs[surface_mask] = self.get_dE(surface_symbols,features)
+                    dEs = self.get_dE(surface_symbols,features)
+                else:
+                    dEs = []
                     
 
         if return_trajectory:
@@ -870,18 +863,18 @@ class Dissolver():
         surface_ids = ids[surface_mask]
         surface_symbols = np.array(symbols)[surface_mask]
 
-        dEs = np.zeros(len(atoms)) + np.inf
+        # dEs = np.zeros(len(atoms)) + np.inf
 
         # get featuers of surface atoms
         features = self.feature_generator(nl,surface_ids,symbols,coordination_numbers)
 
-        dEs[surface_mask] = self.get_dE(surface_symbols,features)
+        dEs = self.get_dE(surface_symbols,features)
 
         while len(atoms)>0:
             
-            if np.any(surface_mask):
+            if len(dEs)>0:
                 # get dissolution potentials
-                dissolution_potentials = self.get_Udiss(surface_symbols,dEs[surface_mask])
+                dissolution_potentials = self.get_Udiss(surface_symbols,dEs)
 
                 min_Udiss = np.min(dissolution_potentials)
 
@@ -891,7 +884,7 @@ class Dissolver():
                 # Dissolve atoms where U_diss<U
                 remove_ids = [np.random.choice(surface_ids[dissolution_potentials==min_Udiss])]
             else:
-                remove_ids = []
+                remove_ids = np.empty(0,dtype=int)
 
             # Dissolve atoms with lower CN than included in model
             if np.any(coordination_numbers<self.min_cn):
@@ -914,26 +907,17 @@ class Dissolver():
                 if traj_file is not None:
                     trajectory.write(atoms)
 
-
+                # Get new CN
                 coordination_numbers,nl = self.get_coordination_numbers(atoms,True)
 
 
                 # relax particle?
                 if relax_func is not None:
-                    np.random.shuffle(free_positions)
-                    atoms, coordination_numbers, nl, dEs, free_positions, update_dE = relax_func(atoms,coordination_numbers,nl,dEs,symbols,free_positions,trajectory)
-                    # surface_mask = (coordination_numbers<=self.max_cn)*(coordination_numbers>=self.min_cn)
-                    # surface_ids = ids[surface_mask]
-                    # surface_symbols = symbols[surface_mask]
-                    # if update_dE:
-                    #     # get featuers of surface atoms
-                    #     features = self.feature_generator(nl,surface_ids,symbols,coordination_numbers)
-                    #     dEs[surface_mask] = self.get_dE(surface_symbols,features)
+                    atoms, coordination_numbers, nl, free_positions = relax_func(atoms,coordination_numbers,nl,symbols,free_positions,trajectory)
 
                 
                 # Mask of atoms on surface to calculate
                 surface_mask = (coordination_numbers<=self.max_cn)*(coordination_numbers>=self.min_cn)
-                dEs = np.zeros(len(atoms)) + np.inf
                 
                 
                 surface_ids = ids[surface_mask]
@@ -943,7 +927,9 @@ class Dissolver():
                     # get featuers of surface atoms
                     features = self.feature_generator(nl,surface_ids,symbols,coordination_numbers)
 
-                    dEs[surface_mask] = self.get_dE(surface_symbols,features)
+                    dEs = self.get_dE(surface_symbols,features)
+                else:
+                    dEs = []
                     
 
         if return_trajectory:

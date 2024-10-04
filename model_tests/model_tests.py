@@ -57,6 +57,7 @@ def run_simulation(args):
     # dissolver = Dissolver(regressor='AgAuCuIrPdPtRhRu_multilinear',c_metals=1e-6)
     dissolve_func,relax_func,particle = args  
     
+    np.random.seed(42)
     atoms,dissolved = dissolve_func(0.8,atoms=particle,relax_func=relax_func)
 
     (surf_comp,bulk_comp),(n_atoms) = dissolver.composition_by_layer(atoms,n_layers=2,precision=3)

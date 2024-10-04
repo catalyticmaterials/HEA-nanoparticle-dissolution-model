@@ -1,8 +1,9 @@
 import numpy as np
 import matplotlib.pyplot as plt
+from matplotlib.patches import Rectangle
 from utilities import metals
 
-Ni = 1925
+Ni = 3355
 
 
 color_dict = {'batch_relax':'darkorange','batch_none':'tab:blue','single_relax':'forestgreen'}
@@ -11,7 +12,7 @@ color_dict = {'batch_relax':'darkorange','batch_none':'tab:blue','single_relax':
 
 fig, axes = plt.subplots(nrows=2,ncols=4,figsize=(12,6))
 axes = axes.flatten()
-for i,method in enumerate(('batch_none','batch_relax','single_relax')):
+for i,method in enumerate(('single_relax','batch_relax','batch_none')):
     
     data = np.loadtxt(f'{method}.csv',delimiter=',')
 
@@ -48,42 +49,47 @@ for i,method in enumerate(('batch_none','batch_relax','single_relax')):
     axes[3].set_title('Average number of each CN')
 
     if method!='batch_none':
-        axes[4].hist(surf_natoms,bins=13,range=(400,465),alpha=0.6,color=color_dict[method])
+        axes[4].hist(surf_natoms,bins=14,range=(582.5,652.5),alpha=0.6,color=color_dict[method])
         axes[4].set_title('$N_{atoms}$ in surface')
         axes[4].axvline(np.mean(surf_natoms),ls=':',color=color_dict[method])
         
-        axes[6].hist(diss_natoms,bins=22,range=(360,580),alpha=0.6,color=color_dict[method])
+        axes[6].hist(diss_natoms,bins=18,range=(650,1010),alpha=0.6,color=color_dict[method])
         axes[6].set_title('$N_{atoms}$ dissolved')
         axes[6].axvline(np.mean(diss_natoms),ls=':',color=color_dict[method])
 
-        axes[7].hist(Nf,bins=30,range=(1300,1600),alpha=0.6,color=color_dict[method])
+        axes[7].hist(Nf,bins=18,range=(2350,2710),alpha=0.6,color=color_dict[method])
         axes[7].set_title('$N_{atoms}$ total')
         axes[7].axvline(np.mean(Nf),ls=':',color=color_dict[method])
 
         axes[5].axvline(np.mean(Sd),ls=':',color=color_dict[method])
-        axes[5].hist(Sd,bins=10,range=(0.25,0.45),alpha=0.6,color=color_dict[method])
+        axes[5].hist(Sd,bins=15,range=(0.245,0.395),alpha=0.6,color=color_dict[method])
         axes[5].set_title('(111) stability ($S_d$)')
     else:
-        axins1 = axes[4].inset_axes((0.1,0.775,0.3,0.2))
+        axins1 = axes[4].inset_axes((0.12,0.775,0.3,0.2))
+
+        axes[4].add_patch(Rectangle((0.12,0.675),0.32,0.3,color='w',alpha=0.75,transform=axes[4].transAxes,zorder=2))
         axins1.hist(surf_natoms,bins=30,range=None,alpha=0.6,color=color_dict[method])
         axins1.axvline(np.median(surf_natoms),ls=':',color=color_dict[method])
         axins1.minorticks_on()
         axins1.yaxis.set_tick_params(which='minor', bottom=False)
 
-        axins2 = axes[6].inset_axes((0.65,0.775,0.3,0.2))
-        axins2.hist(diss_natoms,bins=30,range=(900,2050),alpha=0.6,color=color_dict[method])
+
+        axins2 = axes[6].inset_axes((0.68,0.775,0.3,0.2))
+        axes[6].add_patch(Rectangle((0.6,0.675),0.38,0.3,color='w',alpha=0.75,transform=axes[6].transAxes,zorder=2))
+        axins2.hist(diss_natoms,bins=30,range=None,alpha=0.6,color=color_dict[method])
         axins2.axvline(np.median(diss_natoms),ls=':',color=color_dict[method])
         axins2.minorticks_on()
         axins2.yaxis.set_tick_params(which='minor', bottom=False)
 
-        axins3 = axes[7].inset_axes((0.1,0.775,0.3,0.2))
+        axins3 = axes[7].inset_axes((0.12,0.775,0.3,0.2))
+        axes[7].add_patch(Rectangle((0.12,0.675),0.32,0.3,color='w',alpha=0.75,transform=axes[7].transAxes,zorder=2))
         axins3.hist(Nf,bins=30,range=None,alpha=0.6,color=color_dict[method])
         axins3.axvline(np.median(Nf),ls=':',color=color_dict[method])
         axins3.minorticks_on()
         axins3.yaxis.set_tick_params(which='minor', bottom=False)
 
-        axins4 = axes[5].inset_axes((0.65,0.775,0.3,0.2))
-        axins4.hist(Sd,bins=15,range=(0,0.3),alpha=0.6,color=color_dict[method])
+        axins4 = axes[5].inset_axes((0.12,0.775,0.3,0.2))
+        axins4.hist(Sd,bins=15,range=None,alpha=0.6,color=color_dict[method])
         axins4.axvline(np.median(Sd),ls=':',color=color_dict[method])
         axins4.minorticks_on()
         axins4.yaxis.set_tick_params(which='minor', bottom=False)
@@ -94,6 +100,9 @@ for ax in axes[4:]:
     ax.minorticks_on()
     ax.yaxis.set_tick_params(which='minor', bottom=False)
 
+
+axes[0].set_ylabel('Percentage [%]')
+axes[4].set_ylabel('Frequency')
 
 
 plt.tight_layout()
