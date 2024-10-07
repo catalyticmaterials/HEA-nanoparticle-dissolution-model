@@ -7,7 +7,7 @@ from multiprocessing import Pool
 import os
 
 n=200
-N=1289
+N=1925
 n_metals = len(metals)
 composition = np.ones(n_metals)/n_metals
 
@@ -45,7 +45,7 @@ if __name__ == '__main__':
 
     data = np.hstack((final_111_compositions,dissolution_compositions,dissolution_factors.reshape(-1,1)))
 
-    np.savetxt('equimolar35A_muM_results.csv',data,delimiter=',',header='111 composition, dissolution composition, dissoluton factor',fmt='%1.6f')
+    np.savetxt('equimolar4nm_muM_results.csv',data,delimiter=',',header='111 composition, dissolution composition, dissoluton factor',fmt='%1.6f')
         
 
 

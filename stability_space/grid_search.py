@@ -7,7 +7,9 @@ from tqdm import tqdm
 
 
 
-mfs = get_molar_fractions(0.1,5)
+mfs = get_molar_fractions(0.0625,8)
+print(len(mfs))
+stio
 
 dissolver = Dissolver(regressor='AgAuCuIrPdPtRhRu_multilinear',c_metals=1e-6)
 

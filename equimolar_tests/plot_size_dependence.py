@@ -120,7 +120,7 @@ plt.savefig('sd_size_dependence.png',dpi=600,bbox_inches='tight')
 
 
 max_error = 0.05
-max_df_error = 0.02
+max_sd_error = 0.01
 
 fig,(ax,ax3) = plt.subplots(nrows=2,figsize=(4,5),sharex=True)
 
@@ -137,7 +137,7 @@ ax2.plot(N,n_samples_111,label='$N_{samples}$(111)')
 ax2.plot(N,n_samples_diss,label='$N_{samples}$(diss.)')
 # ax2.set_yscale('log')
 # ax2.set_yticks([1,5,10,50,100],labels=[1,5,10,50,100])
-plt.minorticks_off()
+
 h1, l1 = ax.get_legend_handles_labels()
 h2, l2 = ax2.get_legend_handles_labels()
 ax.legend(h1+h2,l1+l2)
@@ -148,22 +148,29 @@ ax.set_xscale('log')
 ax.set_xticks(N,labels=[1.8, 2.3, 2.8, 3.5, 4.0, 5.0])
 
 
+
 ax3.set_ylabel(r'$\sigma_{S_d}$')
 ax3.scatter(N,df_std,label=r'$\sigma_{S_d}$',color='tab:green')
 ax4 = ax3.twinx()
-n_samples_df = np.ceil((df_std/max_df_error)**2)
+n_samples_df = np.ceil((df_std/max_sd_error)**2)
 ax4.plot(N,n_samples_df,label='$N_{samples}$',color='tab:green')
-ax4.set_ylabel(r'Nr. samples for SE $\leq 2$%')
+ax4.set_ylabel(r'Nr. samples for SE $\leq 1$%')
 ax2.set_ylabel(r'Nr. samples for SE $\leq 5$%')
 # ax4.set_yticks([4,5,6,7])
+
+
 
 h3, l3 = ax3.get_legend_handles_labels()
 h4, l4 = ax4.get_legend_handles_labels()
 ax3.legend(h3+h4,l3+l4)
 
+plt.minorticks_off()
+ax2.yaxis.set_minor_locator(MultipleLocator(1))
+ax4.yaxis.set_major_locator(MultipleLocator(5))
+ax4.yaxis.set_minor_locator(MultipleLocator(1))
 ax3.yaxis.set_major_locator(MultipleLocator(0.01))
 
-plt.minorticks_off()
+# plt.minorticks_off()
 plt.tight_layout()
 plt.savefig('size_required_samples.png',dpi=600)
 
