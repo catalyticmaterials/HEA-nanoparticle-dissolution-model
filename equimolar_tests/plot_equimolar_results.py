@@ -49,7 +49,7 @@ for size in ('35A','4nm'):
 
 
     plt.tight_layout()
-    plt.savefig(f'Equimolar{size}_muM_dissolution_111_compositions.png',dpi=600,bbox_inches='tight')
+    plt.savefig(f'Equimolar{size}_111_compositions.png',dpi=600,bbox_inches='tight')
     plt.close()
 
 
@@ -80,7 +80,7 @@ for size in ('35A','4nm'):
 
 
     plt.tight_layout()
-    plt.savefig(f'Equimolar{size}_muM_dissolution_diss_compositions.png',dpi=600,bbox_inches='tight')
+    plt.savefig(f'Equimolar{size}_diss_compositions.png',dpi=600,bbox_inches='tight')
     plt.close()
 
 
@@ -97,5 +97,4 @@ for size in ('35A','4nm'):
     ax.text(0.98,0.98,text,ha='right',va='top',transform=ax.transAxes)
 
     plt.tight_layout()
-    plt.savefig(f'Equimolar{size}_muM_dissolution_factors.png',dpi=600,bbox_inches='tight')
-    break
+    plt.savefig(f'Equimolar{size}_Sd.png',dpi=600,bbox_inches='tight')
