@@ -256,7 +256,7 @@ def make_triangle_ticks(ax, start, stop, tick, n, offset=(0., 0.),
 	x = np.vstack((x, x + tick[0]))
 	y = start[1] * (1 - r) + stop[1] * r
 	y = np.vstack((y, y + tick[1]))
-	ax.plot(x, y, 'black', lw=1., zorder=1)
+	ax.plot(x, y, 'black', lw=0.8, zorder=1)
 	
 	if tick_labels:
 	
@@ -325,9 +325,9 @@ def prepare_triangle_plot(ax, elems,edges=True,ticks=True):
 	ax.set_ylim(-0.05, h+0.05)
 	if edges:
 		# Plot triangle edges
-		ax.plot([0., 0.5], [0., h], '-', color='black', zorder=1)
-		ax.plot([0.5, 1.], [h, 0.], '-', color='black', zorder=1)
-		ax.plot([0., 1.], [0., 0.], '-', color='black', zorder=1)
+		ax.plot([0., 0.5], [0., h], '-', color='black', zorder=1,lw=1)
+		ax.plot([0.5, 1.], [h, 0.], '-', color='black', zorder=1,lw=1)
+		ax.plot([0., 1.], [0., 0.], '-', color='black', zorder=1,lw=1)
 	
 	# Remove spines
 	for direction in ['right', 'left', 'top', 'bottom']:
@@ -405,13 +405,13 @@ def prepare_tetrahedron_plot(ax, elems):
 
 
 
-def make_ternary_plot(grid,target_func,elements,ax=None,contour_levels=15,vmin=0,vmax=None,colorbar=False,colormap='viridis',minval=0.2,maxval=1.0,cbar_ticks=None,cbar_label=None):
+def make_ternary_plot(grid,target_func,elements,ax=None,contour_levels=15,vmin=0,vmax=None,colorbar=False,colormap='viridis',minval=0.0,maxval=1.0,cbar_ticks=None,cbar_label=None,contourlines=True):
 	# Define color map of plot
 	cmap = truncate_colormap(plt.get_cmap(colormap), minval=minval, maxval=maxval, n=100)
 
 	if ax is None:
 		# Make figure for plotting Gaussian process mean, uncertainty, and acquisition function
-		fig, ax = plt.subplots(figsize=(4,4),dpi=400)
+		fig, ax = plt.subplots(figsize=(4,4))
 		return_fig=True
 	else:
 		return_fig=False
@@ -421,8 +421,12 @@ def make_ternary_plot(grid,target_func,elements,ax=None,contour_levels=15,vmin=0
 
 	# Plot surrogate/uncertainty/acquisition function as a contour plot
 	plot_kwargs = dict(cmap=cmap, levels=contour_levels, zorder=0,vmin=vmin,vmax=vmax)
-
+	
 	contour=ax.tricontourf(*grid, target_func, **plot_kwargs)
+	if contourlines:
+		ax.tricontour(*grid,target_func,levels=contour_levels,colors='k',linewidths=0.05,zorder=0)
+		# contour.set_edgecolor('darkgrey')
+		# contour.set_linewidth(0.1)
 
 	if colorbar:
 		plt.colorbar(contour,ax=ax,shrink=0.5,anchor=(0.0,0.85),ticks=cbar_ticks,label=cbar_label)
