@@ -26,7 +26,7 @@ def maxima(i):
 
 if __name__ == '__main__':
     with Pool(32) as pool:
-        maxima_mask = list(tqdm(pool.imap(maxima,range(n)),total=n, desc= 'Processing'))
+        maxima_mask = list(tqdm(pool.imap(maxima,range(n)),total=n, desc= 'Processing',mininterval=10))
 
 
     maxima_mask = np.array(maxima_mask)
