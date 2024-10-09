@@ -30,7 +30,7 @@ for ternary_metals in (['Pd','Pt','Ru'],['Au','Cu','Pt'],['Au','Cu','Pd']):
 
     fig,ax = plt.subplots(figsize=(4,4))
     ax = prepare_triangle_plot(ax,ternary_metals)
-    for i in range(5):
+    for i in range(50):
         traj_i = np.loadtxt(f'eqm_ternary/{system}/trajectories/traj_111_comp_{i}.csv',delimiter=',',skiprows=1)
         X_traj = molar_fractions_to_cartesians(traj_i)
         ax.plot(X_traj.T[0],X_traj.T[1],c='k',alpha=0.2,zorder=0)
@@ -89,3 +89,4 @@ for ternary_metals in (['Pd','Pt','Ru'],['Au','Cu','Pt'],['Au','Cu','Pd']):
     ax = prepare_triangle_plot(ax,ternary_metals)
     plt.colorbar(image,ax=ax,shrink=0.5,anchor=(0.0,0.85),label='Frequency')
     plt.savefig(f'eqm_ternary/{system}/2dhist_final.png',dpi=600,bbox_inches='tight')
+    break

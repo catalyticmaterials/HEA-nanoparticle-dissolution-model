@@ -9,9 +9,9 @@ from ase.io import write
 from ase.data import covalent_radii, atomic_numbers
 
 dissolver = Dissolver(regressor='AgAuCuIrPdPtRhRu_multilinear',c_metals=1e-6)
-n=2
+
 Sd = []
-dummy = dissolver.dummy_particle(700)
+dummy = dissolver.dummy_particle(1925)
 N_initial_111,_ = dissolver.get_composition_cn(dummy,9)
 # view(dummy)
 # stop
@@ -43,29 +43,23 @@ def get_min_Udiss(atoms):
     return np.min(dissolution_potentials)
 
 
-Pd_particle = dissolver.make_particle([0.0,0.0,0.0,0.0,1,0.0,0.0,0.0],1300,return_particle=True)
-CNs=dissolver.get_coordination_numbers(Pd_particle)
-PdAu_particle = Pd_particle.copy()
-symbols = np.array(['Pd']*len(Pd_particle))
-symbols[CNs<=7] = 'Au'
-PdAu_particle.set_chemical_symbols(symbols)
-dissolver.particle = PdAu_particle.copy()
-# atoms,_=dissolver.dissolve_atoms_mc(1.0,relax_cn=True,traj_file='PdAu_7_1V.traj')
-print(get_min_Udiss(PdAu_particle))
-atoms,_=dissolver.dissolve_atoms(0.95,relax_func=dissolver.relax_particle_batch_cn,traj_file='PdAu_7_095V_batch.traj')
-atoms,_=dissolver.dissolve_atoms_it(0.95,relax_func=dissolver.relax_particle_single_cn,traj_file='PdAu_7_095V_it.traj')
-atoms,_=dissolver.dissolve_atoms(1.0,relax_func=dissolver.relax_particle_batch_cn,traj_file='PdAu_7_1V_batch.traj')
-atoms,_=dissolver.dissolve_atoms_it(1.0,relax_func=dissolver.relax_particle_single_cn,traj_file='PdAu_7_1V_it.traj')
+# Pd_particle = dissolver.make_particle([0.0,0.0,0.0,0.0,1,0.0,0.0,0.0],1300,return_particle=True)
+# CNs=dissolver.get_coordination_numbers(Pd_particle)
+# PdAu_particle = Pd_particle.copy()
+# symbols = np.array(['Pd']*len(Pd_particle))
+# symbols[CNs<=7] = 'Au'
+# PdAu_particle.set_chemical_symbols(symbols)
+# dissolver.particle = PdAu_particle.copy()
 
 
 
 
-stop
+
 
 
 def dissolve(particle,U):
     dissolver.particle = particle
-    atoms,_=dissolver.dissolve_atoms(U,relax_cn=True)
+    atoms,_=dissolver.dissolve_atoms_batch(U,relax_func=dissolver.relax_particle_batch_cn)
 
     N_final_111, final_111_comp = dissolver.get_composition_cn(atoms,9)
     # view(atoms)
@@ -123,11 +117,11 @@ def povray_figure(atoms,name,rotation):
 
 
 # Clean Pd
-Pd_particle = dissolver.make_particle([0.0,0.0,0.0,0.0,1,0.0,0.0,0.0],1300,return_particle=True)
-# povray_figure(Pd_particle,f'Pd','12x,-12y,-3z')
+Pd_particle = dissolver.make_particle([0.0,0.0,0.0,0.0,1,0.0,0.0,0.0],1925,return_particle=True)
+povray_figure(Pd_particle,f'Pd','12x,-12y,-3z')
 CNs=dissolver.get_coordination_numbers(Pd_particle)
 min_Udiss = [get_min_Udiss(Pd_particle)]
-Sds = [dissolve(Pd_particle,min_Udiss[-1]+0.1)[0]]
+
 for cn in (6,7,8):
     PdAu_particle = Pd_particle.copy()
 
@@ -136,15 +130,11 @@ for cn in (6,7,8):
     PdAu_particle.set_chemical_symbols(symbols)
     
 
-    # povray_figure(PdAu_particle,f'PdAu_{cn}','12x,-12y,-3z')
+    povray_figure(PdAu_particle,f'PdAu_{cn}','12x,-12y,-3z')
 
     min_Udiss.append(get_min_Udiss(PdAu_particle))
     # view(PdAu_particle)
-    Sd, fsc, diss_particle = dissolve(PdAu_particle,min_Udiss[-1]+0.1)
 
-    Sds.append(Sd)
-    
-    # povray_figure(diss_particle,f'PdAu_{cn}_diss','12x,-12y,-3z')
 
 
     
@@ -154,7 +144,7 @@ for cn in (6,7,8):
 # ax2 = ax.twinx()
 # ax.scatter(range(4),min_Udiss)
 # ax2.scatter(range(4),Sds,c='tab:orange')
-print(Sds)
+
 print(min_Udiss)
 # plt.show()
 

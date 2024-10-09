@@ -56,52 +56,52 @@ def binary_layer_profile(layer_compositions,natoms,m1_initial,m1,m2):
 
     return fig,ax
 
-# np.random.seed(2)
-# initial_particle = dissolver.make_particle(composition,n_atoms=1925,return_particle=True)
-# # print(len(initial_particle))
-# # view(initial_particle)
-# # stop
-# initial_layer_compositions, initial_n_atoms_layer = dissolver.composition_by_layer(initial_particle,n_layers=5)
 
 
-# binary_layer_profile(initial_layer_compositions,initial_n_atoms_layer,0.75,'Pt','Cu')
-# plt.savefig('layer_profiles/Pt75Cu25_initial.png',dpi=600,bbox_inches='tight')
+np.random.seed(2)
+initial_particle = dissolver.make_particle(composition,n_atoms=1925,return_particle=True)
+
+initial_layer_compositions, initial_n_atoms_layer = dissolver.composition_by_layer(initial_particle,n_layers=5)
 
 
-
-# final_particle, dissolved_atoms = dissolver.dissolve_atoms(0.8,relax_cn=True,traj_file='layer_profiles/Pt75Cu25.traj')
-# final_layer_compositions, final_n_atoms_layer = dissolver.composition_by_layer(final_particle,n_layers=5)
-
-
-# binary_layer_profile(final_layer_compositions,final_n_atoms_layer,0.75,'Pt','Cu')
-# plt.savefig('layer_profiles/Pt75Cu25_final.png',dpi=600,bbox_inches='tight')
+binary_layer_profile(initial_layer_compositions,initial_n_atoms_layer,0.75,'Pt','Cu')
+plt.savefig('layer_profiles/Pt75Cu25_initial.png',dpi=600,bbox_inches='tight')
 
 
 
-
-#PtCu3
-
-# binary_composition = np.array([0.75,0.25])
-
-# composition[metal_mask] = binary_composition
-
-# np.random.seed(2)
-# initial_particle = dissolver.make_particle(composition,n_atoms=1925,return_particle=True)
-
-# initial_layer_compositions, initial_n_atoms_layer = dissolver.composition_by_layer(initial_particle,n_layers=5)
+final_particle, dissolved_atoms = dissolver.dissolve_atoms_batch(0.8,relax_func=dissolver.relax_particle_batch_cn,traj_file='layer_profiles/Pt75Cu25.traj')
+final_layer_compositions, final_n_atoms_layer = dissolver.composition_by_layer(final_particle,n_layers=5)
 
 
-# binary_layer_profile(initial_layer_compositions,initial_n_atoms_layer,0.75,'Cu','Pt')
-# plt.savefig('layer_profiles/Pt25Cu75_initial.png',dpi=600,bbox_inches='tight')
+binary_layer_profile(final_layer_compositions,final_n_atoms_layer,0.75,'Pt','Cu')
+plt.savefig('layer_profiles/Pt75Cu25_final.png',dpi=600,bbox_inches='tight')
 
 
 
-# final_particle, dissolved_atoms = dissolver.dissolve_atoms(0.8,relax_cn=True,traj_file='layer_profiles/Pt25Cu75.traj')
-# final_layer_compositions, final_n_atoms_layer = dissolver.composition_by_layer(final_particle,n_layers=5)
+
+# PtCu3
+
+binary_composition = np.array([0.75,0.25])
+
+composition[metal_mask] = binary_composition
+
+np.random.seed(2)
+initial_particle = dissolver.make_particle(composition,n_atoms=1925,return_particle=True)
+
+initial_layer_compositions, initial_n_atoms_layer = dissolver.composition_by_layer(initial_particle,n_layers=5)
 
 
-# binary_layer_profile(final_layer_compositions,final_n_atoms_layer,0.75,'Cu','Pt')
-# plt.savefig('layer_profiles/Pt25Cu75_final.png',dpi=600,bbox_inches='tight')
+binary_layer_profile(initial_layer_compositions,initial_n_atoms_layer,0.75,'Cu','Pt')
+plt.savefig('layer_profiles/Pt25Cu75_initial.png',dpi=600,bbox_inches='tight')
+
+
+
+final_particle, dissolved_atoms = dissolver.dissolve_atoms_batch(0.8,relax_func=dissolver.relax_particle_batch_cn,traj_file='layer_profiles/Pt25Cu75.traj')
+final_layer_compositions, final_n_atoms_layer = dissolver.composition_by_layer(final_particle,n_layers=5)
+
+
+binary_layer_profile(final_layer_compositions,final_n_atoms_layer,0.75,'Cu','Pt')
+plt.savefig('layer_profiles/Pt25Cu75_final.png',dpi=600,bbox_inches='tight')
 
 
 
@@ -111,7 +111,7 @@ def binary_layer_profile(layer_compositions,natoms,m1_initial,m1,m2):
 
 binary_metals = ['Pt','Ru']
 metal_mask = np.array([metal in binary_metals for metal in metals])
-binary_composition = np.array([0.5,0.5])
+binary_composition = np.array([0.33,0.67])
 composition = np.zeros(8)
 composition[metal_mask] = binary_composition
 
@@ -121,15 +121,46 @@ initial_particle = dissolver.make_particle(composition,n_atoms=1925,return_parti
 initial_layer_compositions, initial_n_atoms_layer = dissolver.composition_by_layer(initial_particle,n_layers=5)
 
 
-binary_layer_profile(initial_layer_compositions,initial_n_atoms_layer,0.5,'Pt','Ru')
+binary_layer_profile(initial_layer_compositions,initial_n_atoms_layer,0.67,'Ru','Pt')
 plt.savefig('layer_profiles/PtRu_initial.png',dpi=600,bbox_inches='tight')
 
 
 
-final_particle, dissolved_atoms = dissolver.dissolve_atoms(1.0,relax_cn=True,traj_file='layer_profiles/PtRu.traj')
+final_particle, dissolved_atoms = dissolver.dissolve_atoms_batch(1.0,relax_func=dissolver.relax_particle_batch_cn,traj_file='layer_profiles/PtRu.traj')
 final_layer_compositions, final_n_atoms_layer = dissolver.composition_by_layer(final_particle,n_layers=5)
 
 print(dissolver.get_composition(final_particle.get_chemical_symbols())[1])
 
-binary_layer_profile(final_layer_compositions,final_n_atoms_layer,0.5,'Pt','Ru')
+binary_layer_profile(final_layer_compositions,final_n_atoms_layer,0.67,'Ru','Pt')
 plt.savefig('layer_profiles/PtRu_final.png',dpi=600,bbox_inches='tight')
+
+
+
+
+
+
+# PdRu
+binary_metals = ['Pd','Ru']
+metal_mask = np.array([metal in binary_metals for metal in metals])
+binary_composition = np.array([0.75,0.25])
+composition = np.zeros(8)
+composition[metal_mask] = binary_composition
+
+np.random.seed(2)
+initial_particle = dissolver.make_particle(composition,n_atoms=1925,return_particle=True)
+
+initial_layer_compositions, initial_n_atoms_layer = dissolver.composition_by_layer(initial_particle,n_layers=5)
+
+
+binary_layer_profile(initial_layer_compositions,initial_n_atoms_layer,0.75,'Pd','Ru')
+plt.savefig('layer_profiles/PdRu_initial.png',dpi=600,bbox_inches='tight')
+
+
+
+final_particle, dissolved_atoms = dissolver.dissolve_atoms_batch(0.8,relax_func=dissolver.relax_particle_batch_cn,traj_file='layer_profiles/PdRu.traj')
+final_layer_compositions, final_n_atoms_layer = dissolver.composition_by_layer(final_particle,n_layers=5)
+
+print(dissolver.get_composition(final_particle.get_chemical_symbols())[1])
+
+binary_layer_profile(final_layer_compositions,final_n_atoms_layer,0.75,'Pd','Ru')
+plt.savefig('layer_profiles/PdRu_final.png',dpi=600,bbox_inches='tight')

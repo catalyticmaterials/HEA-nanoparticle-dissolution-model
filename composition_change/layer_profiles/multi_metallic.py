@@ -84,7 +84,7 @@ def coordination_profile(atoms,ax):
     
         
 
-np.random.seed(1)
+np.random.seed(2)
 
 # 8 metallic
 composition = np.ones(8)/8
@@ -93,7 +93,7 @@ dissolver.make_particle(composition,1925)
 initial_layer_compositions, initial_n_atoms_layer = dissolver.composition_by_layer(dissolver.particle,n_layers=5)
 print(initial_layer_compositions)
 
-final_particle,diss = dissolver.dissolve_atoms(0.8,relax_cn=True,traj_file='layer_profiles/eqm_all_metals.traj')
+final_particle,diss = dissolver.dissolve_atoms_batch(0.8,relax_func=dissolver.relax_particle_batch_cn,traj_file='layer_profiles/eqm_all_metals.traj')
 
 final_layer_compositions, final_n_atoms_layer = dissolver.composition_by_layer(final_particle,n_layers=5)
 
@@ -112,9 +112,9 @@ plt.tight_layout()
 plt.subplots_adjust(top=0.825)
 plt.savefig('layer_profiles/eqm_all_metals.png',dpi=600,bbox_inches='tight')
 print(final_layer_compositions)
+
+
 stop
-
-
 
 np.random.seed(1)
 
@@ -123,7 +123,7 @@ composition = np.array([0.0]*3 + [0.2]*5)
 
 dissolver.make_particle(composition,1925)
 
-final_particle,diss = dissolver.dissolve_atoms(0.8,relax_cn=True)
+final_particle,diss = dissolver.dissolve_atoms_batch(0.8,relax_func=dissolver.relax_particle_batch_cn)
 
 final_layer_compositions, final_n_atoms_layer = dissolver.composition_by_layer(final_particle,n_layers=5)
 
@@ -146,7 +146,7 @@ composition = np.array([0.2,0.2,0.2,0.0,0.2,0.2,0.0,0.0])
 
 dissolver.make_particle(composition,1925)
 
-final_particle,diss = dissolver.dissolve_atoms(0.8,relax_cn=True)
+final_particle,diss = dissolver.dissolve_atoms_batch(0.8,relax_func=dissolver.relax_particle_batch_cn)
 
 final_layer_compositions, final_n_atoms_layer = dissolver.composition_by_layer(final_particle,n_layers=5)
 

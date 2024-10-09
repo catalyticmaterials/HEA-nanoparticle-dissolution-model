@@ -13,7 +13,7 @@ composition = saferound(np.array([1,1,1])/3,places=6)
 
 
 for ternary_metals in (['Pd','Pt','Ru'],['Au','Cu','Pt'],['Au','Cu','Pd']):
-
+    if 'Ru' in ternary_metals: continue
     system = ''.join(ternary_metals)
     ternary_mask = np.array([metal in ternary_metals for metal in metals])
 

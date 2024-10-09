@@ -99,3 +99,32 @@ final_cs = cross_section(final)
 povray_figure(initial_cs,'Pt25Cu75_i_cs')
 povray_figure(final_cs,'Pt25Cu75_f_cs')
 
+
+
+
+
+
+traj = Trajectory('layer_profiles/PtRu.traj')
+
+initial = traj[0]
+final = traj[-1]
+
+initial_cs = cross_section(initial)
+final_cs = cross_section(final)
+
+povray_figure(initial_cs,'PtRu_i_cs')
+povray_figure(final_cs,'PtRu_f_cs')
+
+
+
+
+traj = Trajectory('layer_profiles/PdRu.traj')
+
+initial = traj[0]
+final = traj[-1]
+
+initial_cs = cross_section(initial)
+final_cs = cross_section(final)
+
+povray_figure(initial_cs,'PdRu_i_cs')
+povray_figure(final_cs,'PdRu_f_cs')
