@@ -28,16 +28,16 @@ for ternary_metals in (['Pd','Pt','Ru'],['Au','Cu','Pt'],['Au','Cu','Pd']):
     for i in tqdm(range(50),mininterval=10):
         np.random.seed(i)
         initial_particle = dissolver.make_particle(full_composition,n_atoms=1925,return_particle=True)
-        N_initial_111,initial_111_comp = dissolver.get_composition_cn(initial_particle,9)
+        N_initial_111,initial_111_comp = dissolver.get_composition_cn(initial_particle,9,4)
 
         final_particle, dissolved_atoms,traj_list = dissolver.dissolve_atoms_single(0.8,relax_func=dissolver.relax_particle_single_cn,return_trajectory=True)
-        N_final_111,final_111_comp = dissolver.get_composition_cn(final_particle,9)
+        N_final_111,final_111_comp = dissolver.get_composition_cn(final_particle,9,4)
 
         traj_111_comp = []
         for atoms in traj_list:
-            traj_111_comp.append(dissolver.get_composition_cn(atoms,9)[1])
+            traj_111_comp.append(dissolver.get_composition_cn(atoms,9,4)[1])
 
-        np.savetxt(f'eqm_ternary/{system}/trajectories/traj_111_comp_{i}.csv',np.array(traj_111_comp)[:,ternary_mask],delimiter=',',header=','.join(ternary_metals),fmt='%1.3f')
+        np.savetxt(f'eqm_ternary/{system}/trajectories/traj_111_comp_{i}.csv',np.array(traj_111_comp)[:,ternary_mask],delimiter=',',header=','.join(ternary_metals),fmt='%1.4f')
 
 
         initials.append(np.array(initial_111_comp)[ternary_mask])
