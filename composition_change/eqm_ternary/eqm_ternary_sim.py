@@ -2,6 +2,7 @@ from utilities.particle_dissolver import Dissolver
 from utilities import metals
 import numpy as np
 from iteround import saferound
+from tqdm import tqdm
 
 
 dissolver = Dissolver(regressor='AgAuCuIrPdPtRhRu_multilinear',c_metals=1e-6)
@@ -24,12 +25,12 @@ for ternary_metals in (['Pd','Pt','Ru'],['Au','Cu','Pt'],['Au','Cu','Pd']):
     finals = []
     diss = []
     Sd = []
-    for i in range(100):
+    for i in tqdm(range(50),mininterval=10):
         np.random.seed(i)
-        initial_particle = dissolver.make_particle(full_composition,n_atoms=1289,return_particle=True)
+        initial_particle = dissolver.make_particle(full_composition,n_atoms=1925,return_particle=True)
         N_initial_111,initial_111_comp = dissolver.get_composition_cn(initial_particle,9)
 
-        final_particle, dissolved_atoms,traj_list = dissolver.dissolve_atoms(0.8,relax_cn=True,return_trajectory=True)
+        final_particle, dissolved_atoms,traj_list = dissolver.dissolve_atoms_single(0.8,relax_func=dissolver.relax_particle_single_cn,return_trajectory=True)
         N_final_111,final_111_comp = dissolver.get_composition_cn(final_particle,9)
 
         traj_111_comp = []

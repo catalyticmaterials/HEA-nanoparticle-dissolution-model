@@ -817,6 +817,9 @@ class Dissolver():
                     dEs = self.get_dE(surface_symbols,features)
                 else:
                     dEs = []
+                
+                if return_trajectory:
+                    trajectory_list.append(atoms.copy())
                     
 
         if return_trajectory:
@@ -930,6 +933,10 @@ class Dissolver():
                     dEs = self.get_dE(surface_symbols,features)
                 else:
                     dEs = []
+
+                
+                if return_trajectory:
+                    trajectory_list.append(atoms.copy())
                     
 
         if return_trajectory:

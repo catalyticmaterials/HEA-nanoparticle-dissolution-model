@@ -30,7 +30,7 @@ for ternary_metals in (['Pd','Pt','Ru'],['Au','Cu','Pt'],['Au','Cu','Pd']):
 
     fig,ax = plt.subplots(figsize=(4,4))
     ax = prepare_triangle_plot(ax,ternary_metals)
-    for i in range(100):
+    for i in range(5):
         traj_i = np.loadtxt(f'eqm_ternary/{system}/trajectories/traj_111_comp_{i}.csv',delimiter=',',skiprows=1)
         X_traj = molar_fractions_to_cartesians(traj_i)
         ax.plot(X_traj.T[0],X_traj.T[1],c='k',alpha=0.2,zorder=0)
