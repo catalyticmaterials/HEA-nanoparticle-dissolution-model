@@ -24,13 +24,12 @@ for E_100 in E_list:
 
 
 
-def dissolve(E_100):
-    # dummy = Dissolver.dummy_particle(n_atoms=N,energies=[1,E_100])
-    # N_initial = len(dummy)
-    # N_initial_111 = len(Dissolver.get_111_atoms(dummy))
+def dissolve(args):
+    E_100,seed = args
+    np.random.seed(seed)
     N_initial_111 = N_111_dict[str(E_100)]
     dissolver.make_particle(composition,n_atoms=N,energies=[1,E_100])
-    atoms, dissolved_atoms = dissolver.dissolve_atoms(0.8,relax_cn=True)
+    atoms, dissolved_atoms = dissolver.dissolve_atoms_batch(0.8,relax_func=dissolver.relax_particle_batch_cn)
 
     N_final_111, final_111_composition = dissolver.get_composition_cn(atoms,9)
     N_diss,dissolution_composition = dissolver.get_composition(dissolved_atoms,precision=6)
@@ -44,14 +43,13 @@ if __name__ == '__main__':
 
     datalist = []
     for E_100 in E_list:
-        Es = np.ones(n)*E_100
-        np.random.seed(42)
+        args = [[E_100,i] for i in range(n)]
         N_final=[]
         dissolution_compositions = []
         final_111_compositions = []
         dissolution_factors = []
-        with Pool(4) as pool:
-            results = list(tqdm(pool.imap(dissolve,Es),total=n, desc= 'Processing'))
+        with Pool(32) as pool:
+            results = list(tqdm(pool.imap(dissolve,args),total=n, desc= 'Processing',mininterval=10))
 
         results = np.array(results)
         final_111_compositions = results[:,:n_metals]
