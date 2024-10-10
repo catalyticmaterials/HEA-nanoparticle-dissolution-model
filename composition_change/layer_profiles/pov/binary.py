@@ -26,7 +26,7 @@ def get_colors(atoms):
 
 r_Pt = [covalent_radii[atomic_numbers['Pt']]]
 
-def povray_figure(atoms,name):
+def povray_figure(atoms,name,rotation):
     bbox_coord = np.max(np.abs(atoms.get_positions()))*1.4
     colors = get_colors(atoms)
     
@@ -54,9 +54,21 @@ def povray_figure(atoms,name):
        
 
     }
-
-    write(f'layer_profiles/pov/{name}.pov', atoms, colors=colors,rotation='0x,-30y,0z',radii=radii,
+    filename = f'layer_profiles/pov/{name}.pov'
+    write(filename, atoms, colors=colors,rotation=rotation,radii=radii,
       bbox = [-bbox_coord, -bbox_coord, bbox_coord, bbox_coord], show_unit_cell=0, povray_settings=povray_settings)
+    
+    # Costum light setting
+    with open(filename, "r") as f:
+        lines = f.readlines()
+    lines[10:15] = ['light_source {<  -30.00,  30.00,   40.00> color Gray40 shadowless}\n',
+                             'light_source {<  30.00,  30.00,   40.00> color Gray40 shadowless}\n',
+                             'light_source {<  30.0,  -30.00,   40.00> color Gray40 shadowless}\n',
+                             'light_source {<  -30.0,  -30.00,   40.00> color Gray40 shadowless}\n',
+                             'light_source {<  0.0,  0.00,   40.00> color Gray25 shadowless}\n']
+    with open(filename, "w") as f:
+        for line in lines:
+            f.write(line)
     
 
 
@@ -80,8 +92,10 @@ final = traj[-1]
 initial_cs = cross_section(initial)
 final_cs = cross_section(final)
 
-povray_figure(initial_cs,'Pt75Cu25_i_cs')
-povray_figure(final_cs,'Pt75Cu25_f_cs')
+povray_figure(initial,'Pt75Cu25_i','12x,-12y,-3z')
+povray_figure(final,'Pt75Cu25_f','12x,-12y,-3z')
+povray_figure(initial_cs,'Pt75Cu25_i_cs','-90y')
+povray_figure(final_cs,'Pt75Cu25_f_cs','-90y')
 
 
 
@@ -96,8 +110,10 @@ final = traj[-1]
 initial_cs = cross_section(initial)
 final_cs = cross_section(final)
 
-povray_figure(initial_cs,'Pt25Cu75_i_cs')
-povray_figure(final_cs,'Pt25Cu75_f_cs')
+povray_figure(initial,'Pt25Cu75_i','12x,-12y,-3z')
+povray_figure(final,'Pt25Cu75_f','12x,-12y,-3z')
+povray_figure(initial_cs,'Pt25Cu75_i_cs','-90y')
+povray_figure(final_cs,'Pt25Cu75_f_cs','-90y')
 
 
 
@@ -112,8 +128,10 @@ final = traj[-1]
 initial_cs = cross_section(initial)
 final_cs = cross_section(final)
 
-povray_figure(initial_cs,'PtRu_i_cs')
-povray_figure(final_cs,'PtRu_f_cs')
+povray_figure(initial,'PtRu_i','12x,-12y,-3z')
+povray_figure(final,'PtRu_f','12x,-12y,-3z')
+povray_figure(initial_cs,'PtRu_i_cs','-90y')
+povray_figure(final_cs,'PtRu_f_cs','-90y')
 
 
 
@@ -126,5 +144,7 @@ final = traj[-1]
 initial_cs = cross_section(initial)
 final_cs = cross_section(final)
 
-povray_figure(initial_cs,'PdRu_i_cs')
-povray_figure(final_cs,'PdRu_f_cs')
+povray_figure(initial,'PdRu_i','12x,-12y,-3z')
+povray_figure(final,'PdRu_f','12x,-12y,-3z')
+povray_figure(initial_cs,'PdRu_i_cs','-90y')
+povray_figure(final_cs,'PdRu_f_cs','-90y')

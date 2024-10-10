@@ -3,14 +3,36 @@ import matplotlib.pyplot as plt
 from utilities.colors import alloy_color
 from utilities.compositionspace_functions import prepare_triangle_plot, get_molar_fractions, molar_fractions_to_cartesians, make_ternary_plot
 from matplotlib.cm import ScalarMappable
-
+from utilities import metals
 
 mfs = get_molar_fractions(0.01,3)
 xgrid = molar_fractions_to_cartesians(mfs)
 
+data = np.loadtxt('grid_data.csv',delimiter=',',skiprows=1)
+bulk_comp_all = data[:,:8]
+isc_all = data[:,8:16]
+fsc_all = data[:,16:24]
+diss_all = data[:,24:-1]
+Sd_all = data[:,-1]
 
-for ternary_metals in (['Pd','Pt','Ru'],['Au','Cu','Pt'],['Au','Cu','Pd']):
-    break
+for ternary_metals in (['Pd','Pt','Ru'],['Au','Cu','Pt'],['Au','Cu','Pd'],['Pd','Pt','Rh'],['Ir','Pt','Ru'],['Ag','Au','Pd'],['Ag','Pd','Pt'],['Ag','Au','Cu'],['Ag','Cu','Pd'],['Ag','Cu','Pt'],['Ag','Pt','Ru'],['Ag','Pd','Ru']):
+
+    metal_mask = [metal in ternary_metals for metal in metals]
+    
+    bulk_comp = bulk_comp_all[:,metal_mask]
+    isc = isc_all[:,metal_mask]
+    fsc = fsc_all[:,metal_mask]
+    diss = diss_all[:,metal_mask]
+
+    ternary_mask = np.isclose(np.sum(bulk_comp,axis=1),1)
+
+    bulk_comp = bulk_comp[ternary_mask]
+    isc = isc[ternary_mask]
+    fsc = fsc[ternary_mask]
+    diss = diss[ternary_mask]
+    Sd = Sd_all[ternary_mask]
+    
+
     system = ''.join(ternary_metals)
 
     c = [alloy_color(ternary_metals,mf) for mf in mfs]
@@ -21,12 +43,6 @@ for ternary_metals in (['Pd','Pt','Ru'],['Au','Cu','Pt'],['Au','Cu','Pd']):
 
     plt.savefig(f'ternaries/{system}_cmap.png',dpi=600,bbox_inches='tight')
 
-    data=np.loadtxt(f'ternaries/{system}_sc_maping.csv',delimiter=',')
-
-    bulk_comp = data[:,:3]
-    isc = data[:,3:6]
-    fsc = data[:,6:-1]
-    Sd = data[:,-1]
 
     bulk_colors = np.array([alloy_color(ternary_metals,mf) for mf in bulk_comp])
 
@@ -61,9 +77,21 @@ for ternary_metals in (['Pd','Pt','Ru'],['Au','Cu','Pt'],['Au','Cu','Pd']):
     
     X = molar_fractions_to_cartesians(bulk_comp).T
 
-    ax.scatter(X[0],X[1],color=fsc_colors,marker='h',s=115)
+    ax.scatter(X[0],X[1],color=fsc_colors,marker='h',s=175)
 
     plt.savefig(f'ternaries/{system}_bc2fsc.png',dpi=600,bbox_inches='tight')
+
+
+    diss_color = [alloy_color(ternary_metals,mf) for mf in diss]
+
+    fig,ax = plt.subplots(figsize=(4,4))
+    ax = prepare_triangle_plot(ax,ternary_metals)
+    
+    X = molar_fractions_to_cartesians(bulk_comp).T
+
+    ax.scatter(X[0],X[1],color=diss_color,marker='h',s=175)
+
+    plt.savefig(f'ternaries/{system}_bc2diss.png',dpi=600,bbox_inches='tight')
 
 
 
@@ -71,3 +99,5 @@ for ternary_metals in (['Pd','Pt','Ru'],['Au','Cu','Pt'],['Au','Cu','Pd']):
     ax=make_ternary_plot(X,Sd,ternary_metals,ax=ax,vmin=0.0,vmax=1.0,colormap='coolwarm_r',minval=0.0)
 
     plt.savefig(f'ternaries/{system}_Sd.png',dpi=600,bbox_inches='tight')
+
+    plt.close()
