@@ -97,7 +97,7 @@ final_particle,diss = dissolver.dissolve_atoms_batch(0.8,relax_func=dissolver.re
 
 final_layer_compositions, final_n_atoms_layer = dissolver.composition_by_layer(final_particle,n_layers=5)
 
-fig,(ax1,ax2) = plt.subplots(ncols=2,figsize=(6,3),sharey=True)
+fig,(ax1,ax2) = plt.subplots(ncols=2,figsize=(7,3),sharey=True)
 layer_profile(final_layer_compositions,final_n_atoms_layer,ax1)
 
 # plt.tight_layout()

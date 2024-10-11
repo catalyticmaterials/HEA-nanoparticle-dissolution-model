@@ -5,16 +5,19 @@ from utilities.colors import metal_colors
 from matplotlib.colors import to_rgb
 from ase.io import write, Trajectory
 from ase.data import covalent_radii, atomic_numbers
+from utilities.particle_dissolver import Dissolver
 
 
+particle = Dissolver.dummy_particle(1925)
+bbox_coord = np.max(np.abs(particle.get_positions()))*1.4
 
 
 colors_dict = {metal:to_rgb(metal_colors[metal]) for metal in metals}
-colors_dict['Pd'] = (10/255,15/255,225/255)
-colors_dict['Pt'] = (0/255,100/255,0/255)
-colors_dict['Ir'] = (40/255,0,85/255)
-colors_dict['Ru'] = (120/255,0,0/255)
-colors_dict['Ag'] -= np.array([40,40,40])/255
+# colors_dict['Pd'] = (10/255,15/255,225/255)
+# colors_dict['Pt'] = (0/255,100/255,0/255)
+# colors_dict['Ir'] = (40/255,0,85/255)
+# colors_dict['Ru'] = (120/255,0,0/255)
+# colors_dict['Ag'] -= np.array([40,40,40])/255
 
 
 def get_colors(atoms):
@@ -28,7 +31,7 @@ def get_colors(atoms):
 r_Pt = [covalent_radii[atomic_numbers['Pt']]]
 
 def povray_figure(atoms,name,rotation):
-    bbox_coord = np.max(np.abs(atoms.get_positions()))*1.4
+    # bbox_coord = np.max(np.abs(atoms.get_positions()))*1.4
     colors = get_colors(atoms)
     
     radii = r_Pt*len(atoms)
@@ -56,8 +59,21 @@ def povray_figure(atoms,name,rotation):
 
     }
 
-    write(f'layer_profiles/pov/{name}.pov', atoms, colors=colors,rotation=rotation,radii=radii,
+    filename = f'layer_profiles/pov/{name}.pov'
+    write(filename, atoms, colors=colors,rotation=rotation,radii=radii,
       bbox = [-bbox_coord, -bbox_coord, bbox_coord, bbox_coord], show_unit_cell=0, povray_settings=povray_settings)
+    
+    # Costum light setting
+    with open(filename, "r") as f:
+        lines = f.readlines()
+    lines[10:15] = ['light_source {<  -30.00,  30.00,   40.00> color Gray40 shadowless}\n',
+                             'light_source {<  30.00,  30.00,   40.00> color Gray40 shadowless}\n',
+                             'light_source {<  30.0,  -30.00,   40.00> color Gray40 shadowless}\n',
+                             'light_source {<  -30.0,  -30.00,   40.00> color Gray40 shadowless}\n',
+                             'light_source {<  0.0,  0.00,   40.00> color Gray25 shadowless}\n']
+    with open(filename, "w") as f:
+        for line in lines:
+            f.write(line)
     
 
 
@@ -73,6 +89,10 @@ def cross_section(atoms_):
 
 
 
+
+
+
+
 traj = Trajectory('layer_profiles/eqm_all_metals.traj')
 
 initial = traj[0]
@@ -81,8 +101,8 @@ final = traj[-1]
 initial_cs = cross_section(initial)
 final_cs = cross_section(final)
 
-povray_figure(initial_cs,'eqm_all_i_cs','0x,-30y,0z')
-povray_figure(final_cs,'eqm_all_f_cs','0x,-30y,0z')
+povray_figure(initial_cs,'eqm_all_i_cs','0x,-90y,0z')
+povray_figure(final_cs,'eqm_all_f_cs','0x,-90y,0z')
 # povray_figure(initial,'eqm_all_i','0x')
 # povray_figure(final,'eqm_all_f','0x')
 povray_figure(initial,'eqm_all_i','12x,-12y,-3z')

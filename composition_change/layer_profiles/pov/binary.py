@@ -5,15 +5,19 @@ from utilities.colors import metal_colors
 from matplotlib.colors import to_rgb
 from ase.io import write, Trajectory
 from ase.data import covalent_radii, atomic_numbers
+from utilities.particle_dissolver import Dissolver
 
+
+particle = Dissolver.dummy_particle(1925)
+bbox_coord = np.max(np.abs(particle.get_positions()))*1.4
 
 
 
 colors_dict = {metal:to_rgb(metal_colors[metal]) for metal in metals}
-colors_dict['Pd'] = (10/255,15/255,225/255)
-colors_dict['Pt'] = (0/255,100/255,0/255)
-colors_dict['Ir'] = (40/255,0,85/255)
-colors_dict['Ru'] = (120/255,0,0/255)
+# colors_dict['Pd'] = (10/255,15/255,225/255)
+# colors_dict['Pt'] = (0/255,100/255,0/255)
+# colors_dict['Ir'] = (40/255,0,85/255)
+# colors_dict['Ru'] = (120/255,0,0/255)
 
 
 def get_colors(atoms):
@@ -27,7 +31,7 @@ def get_colors(atoms):
 r_Pt = [covalent_radii[atomic_numbers['Pt']]]
 
 def povray_figure(atoms,name,rotation):
-    bbox_coord = np.max(np.abs(atoms.get_positions()))*1.4
+    # bbox_coord = np.max(np.abs(atoms.get_positions()))*1.4
     colors = get_colors(atoms)
     
     radii = r_Pt*len(atoms)
@@ -148,3 +152,21 @@ povray_figure(initial,'PdRu_i','12x,-12y,-3z')
 povray_figure(final,'PdRu_f','12x,-12y,-3z')
 povray_figure(initial_cs,'PdRu_i_cs','-90y')
 povray_figure(final_cs,'PdRu_f_cs','-90y')
+
+
+
+
+
+
+traj = Trajectory('layer_profiles/AuPd.traj')
+
+initial = traj[0]
+final = traj[-1]
+
+initial_cs = cross_section(initial)
+final_cs = cross_section(final)
+
+povray_figure(initial,'AuPd_i','12x,-12y,-3z')
+povray_figure(final,'AuPd_f','12x,-12y,-3z')
+povray_figure(initial_cs,'AuPd_i_cs','-90y')
+povray_figure(final_cs,'AuPd_f_cs','-90y')

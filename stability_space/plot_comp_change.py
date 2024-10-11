@@ -15,7 +15,7 @@ fsc_all = data[:,16:24]
 diss_all = data[:,24:-1]
 Sd_all = data[:,-1]
 
-for ternary_metals in (['Pd','Pt','Ru'],['Au','Cu','Pt'],['Au','Cu','Pd'],['Pd','Pt','Rh'],['Ir','Pt','Ru'],['Ag','Au','Pd'],['Ag','Pd','Pt'],['Ag','Au','Cu'],['Ag','Cu','Pd'],['Ag','Cu','Pt'],['Ag','Pt','Ru'],['Ag','Pd','Ru']):
+for ternary_metals in (['Pd','Pt','Ru'],['Au','Cu','Pt'],['Au','Cu','Pd'],['Pd','Pt','Rh'],['Ir','Pt','Ru'],['Ag','Au','Pd'],['Ag','Pd','Pt'],['Ag','Au','Cu'],['Ag','Cu','Pd'],['Ag','Cu','Pt'],['Ag','Pt','Ru'],['Ag','Pd','Ru'],['Au','Pd','Pt']):
 
     metal_mask = [metal in ternary_metals for metal in metals]
     
