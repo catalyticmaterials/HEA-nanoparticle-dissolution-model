@@ -2,7 +2,6 @@ import numpy as np
 import matplotlib.pyplot as plt
 from matplotlib.lines import Line2D
 from math import log10,floor
-from scipy import stats
 from utilities.colors import metal_colors
 from utilities import metals
 from matplotlib.ticker import MultipleLocator
@@ -85,7 +84,6 @@ def partity_plot(y_true,y_preds,metal_feature,unit='eV'):
 
     ax_ins.hist(E,bins=int(np.sqrt(len(E))),color='k',alpha=0.33)
     for i,metal in enumerate(metals):
-        # ax_ins.hist(E[metal_feature[:,i]==1],bins=15,color=metal_colors[metal],alpha=0.1)
         ax_ins.hist(E[metal_feature[:,i]==1],bins=15,color=metal_colors[metal],alpha=0.7,histtype='step')
     ax_ins.axvline(np.mean(E),c='k',ls=':',lw=1)
     # Remove borders, labels, and ticks
@@ -97,11 +95,6 @@ def partity_plot(y_true,y_preds,metal_feature,unit='eV'):
     ax_ins.set_xlabel(f'{prop}$_{{pred}} -$ {prop}$_{{DFT}}$' + f'[{unit}]')
     ax_ins.set_facecolor('none')
 
-    # Test if gaussian
-    # ks_statistic, ks_p_value = stats.kstest(E, stats.norm(loc=0,scale=np.std(E)).cdf)
-    # print(ks_p_value)
-    # ax_ins.text(1,1,f'$p_{{norm}} =$ {sci_notation(ks_p_value,decimal_digits=0)}',va='top',ha='right',transform=ax_ins.transAxes,size='small')
-
     ax.set_ylim(lims)
     ax.set_xlim(lims)
 
@@ -109,7 +102,7 @@ def partity_plot(y_true,y_preds,metal_feature,unit='eV'):
     ax.set_xlabel(f'{prop}$_{{DFT}}$ [{unit}]')
     ax.set_ylabel(f'{prop}$_{{pred}}$ [{unit}]')
 
-    # txt = f'MAE = {MAE:1.3f} {unit}\nRMSE = {RMSE:1.3f} {unit}\nME = {ME:1.3f}$\pm${ME_SE:1.3f} {unit}\n$R^2$ = {R2:1.3f} {unit}'
+
     txt = f'MAE = {MAE:1.3f} {unit}\nRMSE = {RMSE:1.3f} {unit}\n$R^2$ = {R2:1.3f} {unit}'
     ax.text(0.23,0.975,txt,va='top',transform=ax.transAxes)
     
@@ -127,6 +120,5 @@ def partity_plot(y_true,y_preds,metal_feature,unit='eV'):
     ax_ins.xaxis.set_minor_locator(MultipleLocator(0.1))
 
     ax.legend(handles=handles,loc=2)
-    # plt.tight_layout()
     ax.set_aspect('equal')
     return fig, ax

@@ -1,5 +1,5 @@
 from utilities.linear_model import MultiLinearRegressor
-from utilities import metals,U_standard
+from utilities import metals, U_diss
 from parity_plot import partity_plot
 import matplotlib.pyplot as plt
 import numpy as np
@@ -13,7 +13,6 @@ data = np.loadtxt('../DFT_calculations/hea_data.csv',delimiter=',',skiprows=1)
 
 features_ = data[:,:-3]
 
-# cn = data[:,-2]
 dE = data[:,-3]
 cn = np.asarray(np.sum(features_[:,n_metals:],axis=1),dtype=int)
 
@@ -81,19 +80,9 @@ for i,metal in enumerate(metals):
     
     
 
-# Pt1 = regressor.predict('Pt',np.array([0,1,0,0,0,0,0] + [0,2,0,0,0,1,0,1]))
-# Pt2 = regressor.predict('Pt',np.array([0,0,1,0,0,0,0] + [0,3,0,0,0,1,0,1]))
-# Au1 = regressor.predict('Au',np.array([0,1,0,0,0,0,0] + [0,2,0,0,1,0,0,1]))
-# Au2 = regressor.predict('Au',np.array([0,0,1,0,0,0,0] + [0,2,0,0,1,1,0,1]))
-# # Au1 = regressor.predict('Au',np.array([0,0,0,0,0,1,0] + [0,2,0,0,1,0,0,1]))
-# # Au2 = regressor.predict('Au',np.array([0,0,0,0,0,0,1] + [0,2,0,0,1,1,0,1]))
 
-
-# print(Pt2-Pt1)
-# print(Au2-Au1)
-
-with open('../utilities/AgAuCuIrPdPtRhRu_multilinear.regressor','wb') as out:
-	pickle.dump(regressor,out)
+# with open('../utilities/AgAuCuIrPdPtRhRu_multilinear.regressor','wb') as out:
+# 	pickle.dump(regressor,out)
       
 
 
@@ -106,7 +95,7 @@ for i,metal in enumerate(metals):
 partity_plot(dE,preds,metal_feature)
 
 plt.tight_layout()
-plt.savefig('train_parity_eV.png',dpi=600)
+plt.savefig('parity_plots/train_parity_eV.png',dpi=600)
 
 
 preds = np.array(preds)
@@ -115,14 +104,12 @@ preds_U = np.zeros(len(preds))
 U = np.zeros_like(preds_U)
 for i,metal in enumerate(metals):
     mask = metal_feature[:,i]==1
-    preds_U[mask] = np.min(preds[mask]/U_standard[metal]['n'] + U_standard[metal]['U'],axis=0)
-
-    U[mask] = np.min(dE[mask]/U_standard[metal]['n'] + U_standard[metal]['U'],axis=0)
-
+    preds_U[mask] = U_diss(preds[mask],metal,1e-6)
+    U[mask] = U_diss(dE[mask],metal,1e-6)
 
 partity_plot(U,preds_U,metal_feature,unit='V')
 
 plt.tight_layout()
-plt.savefig('train_parity_V.png',dpi=600)
+plt.savefig('parity_plots/train_parity_V.png',dpi=600)
 
 

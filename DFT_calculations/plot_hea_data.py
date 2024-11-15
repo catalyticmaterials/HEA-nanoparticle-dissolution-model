@@ -1,8 +1,9 @@
 import matplotlib.pyplot as plt
 import numpy as np
-from utilities import metals,U_standard
+from utilities import metals
 from utilities.colors import metal_colors
 from matplotlib.ticker import MultipleLocator
+from matplotlib.lines import Line2D
 
 n_metals = len(metals)
 
@@ -44,11 +45,11 @@ for metal,ax in zip(metals,axes.flatten()):
         z = np.abs((dE[CN_mask]-mu)/s)
         # print(cn)
         CN_data = metal_data[CN_mask]
-        # if np.any(z>3):
-        #     print(metal,cn)
-        #     print(CN_data[z>3])
-        if cn==6:
-            print(metal,np.sum(CN_data[:,8+metal_idx]>0))
+
+
+    handles = [Line2D([0], [0], marker='o', color="w", label=metal,markerfacecolor=metal_colors[metal], markersize=8)]
+    ax.legend(handles=handles,labels=[metal],loc='lower right')
+        
 
 
 

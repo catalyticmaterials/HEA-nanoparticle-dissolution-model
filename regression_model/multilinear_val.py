@@ -1,16 +1,17 @@
-from utilities import metals,U_standard
+from utilities import metals,U_diss
 import numpy as np
 from sklearn.linear_model import LinearRegression
 from sklearn.model_selection import LeaveOneOut
 import matplotlib.pyplot as plt
 from parity_plot import partity_plot
+from scipy.optimize import minimize
 
 n_metals = len(metals)
 data = np.loadtxt('../DFT_calculations/hea_data.csv',delimiter=',',skiprows=1)
 
 features_ = data[:,:-3]
 
-# cn = data[:,-2]
+
 dE = data[:,-3]
 cn = np.asarray(np.sum(features_[:,n_metals:],axis=1),dtype=int)
 
@@ -51,7 +52,7 @@ metal_feature = np.vstack((metal_feature,np.vstack([np.eye(n_metals)]*7)))
 
 
 
-# regressor = MultiLinearRegressor()
+
 regressor = LinearRegression(fit_intercept=False)
 # Cost function: sum of squared residuals
 def cost_function(params, X, y):
@@ -69,22 +70,20 @@ def eq_constrain(params):
 
 # Initial guess for the parameters
 initial_params = np.append(np.arange(-3,4)/3,np.zeros(8))
-from scipy.optimize import minimize
 
-# constraints = LinearConstraint(A,ub=np.zeros(6),keep_feasible=True)
+
+
 
 loo = LeaveOneOut()
 preds = []
 for train_index,test_index in loo.split(features):
-    # print(test_index)
+
     X_train = features[train_index]
     X_test = features[test_index]
 
-    # y_train = U[train_index]
     y_train = dE[train_index]
 
     metal_idx = np.where(metal_feature[test_index][0]==1)[0][0]
-
 
     mask = metal_feature[train_index,metal_idx]==1
 
@@ -101,18 +100,16 @@ for train_index,test_index in loo.split(features):
     params = result.x
 
 
-    
     preds.append(np.dot(X_test,params)[0])
 
 
-# mask = dE[:100]>-1.5
-# print(np.mean(np.abs(np.array(preds)-dE)))
+
 
 
 partity_plot(dE,preds,metal_feature,unit='eV')
 
-# plt.tight_layout()
-plt.savefig('loocv_parity_eV.png',dpi=600,bbox_inches='tight')
+
+plt.savefig('parity_plots/loocv_parity_eV.png',dpi=600,bbox_inches='tight')
 
 
 preds = np.array(preds)
@@ -121,14 +118,11 @@ preds_U = np.zeros(len(preds))
 U =np.zeros_like(preds_U)
 for i,metal in enumerate(metals):
     mask = metal_feature[:,i]==1
-    preds_U[mask] = np.min(preds[mask]/U_standard[metal]['n'] + U_standard[metal]['U'],axis=0)
-    # preds_U[mask] = U_diss(preds[mask],metal,1e-6)
-    U[mask] = np.min(dE[mask]/U_standard[metal]['n'] + U_standard[metal]['U'],axis=0)
-    # U[mask] = U_diss(dE[mask],metal,1e-6)
+    preds_U[mask] = U_diss(preds[mask],metal,1e-6)
+    U[mask] = U_diss(dE[mask],metal,1e-6)
 
 partity_plot(U,preds_U,metal_feature,unit='V')
 
-# plt.tight_layout()
-plt.savefig('loocv_parity_V.png',dpi=600,bbox_inches='tight')
+plt.savefig('parity_plots/loocv_parity_V.png',dpi=600,bbox_inches='tight')
 
 
