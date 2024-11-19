@@ -81,8 +81,8 @@ for i,metal in enumerate(metals):
     
 
 
-# with open('../utilities/AgAuCuIrPdPtRhRu_multilinear.regressor','wb') as out:
-# 	pickle.dump(regressor,out)
+with open('../utilities/AgAuCuIrPdPtRhRu_multilinear.regressor','wb') as out:
+	pickle.dump(regressor,out)
       
 
 
