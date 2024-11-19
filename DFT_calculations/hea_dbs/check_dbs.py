@@ -1,6 +1,5 @@
 from ase.db import connect
 import numpy as np
-from ase.visualize import view
 from ase.neighborlist import NeighborList, natural_cutoffs
 
 
@@ -13,8 +12,6 @@ tol = 0.5
 
 for surface in ('T111','T100','Edge','Kink'):
     
-    # if surface!='Edge':
-    #     continue
     
     print(surface)
     with connect(f'hea_dbs/{surface}_HEA.db') as db_orig, connect(f'hea_dbs/{surface}_HEA_out.db') as db:#,connect(f'hea_dbs/{surface}_HEA_check.db') as db_check, connect('hea_dbs/discarded_structures.db') as db_discard:
@@ -74,12 +71,9 @@ for surface in ('T111','T100','Edge','Kink'):
                     if np.any(np.sort(n_ids)!=np.array([0,1,3,5,6,10])):
                         print(row.id,n_ids)
             
-            # else:
-            #     db_check.write(atoms,**row_kwargs)
-
 
     print('count:',count)
-    # break
+
 
 
     print()

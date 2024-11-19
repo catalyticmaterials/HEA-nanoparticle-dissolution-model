@@ -2,21 +2,9 @@ from.colors import metal_colors
 import pickle
 import numpy as np
 
-# metals = ['Ir','Pd','Pt','Rh','Ru']
 metals = ['Ag','Au','Cu','Ir','Pd','Pt','Rh','Ru']
 
 # Standard reduction potentials from CRC handbook 97th edition (2016)
-# U_standard = { 
-#     'Ag': {'n':1, 'U':0.80},
-#     'Au': {'n':3,'U':1.50},
-#     'Cu': {'n':2,'U':0.34},
-#     'Ir':{'n':3,'U':1.16},
-#     'Pd':{'n':2,'U':0.95},
-#     'Pt':{'n':2,'U':1.18}, 
-#     'Rh':{'n':1,'U':0.60},
-#     'Ru':{'n':2,'U':0.46}
-# }
-
 U_standard = { 
     'Ag': {'n':np.array([[1]]), 'U':np.array([[0.80]])},
     'Au': {'n':np.array([[1],[3]]),'U':np.array([[1.69],[1.50]])},

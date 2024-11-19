@@ -1,12 +1,10 @@
 import numpy as np
 from ase.cluster import wulff_construction
 from ase.neighborlist import NeighborList
-from copy import deepcopy
 from ase.io import Trajectory
 from iteround import saferound
 from . import U_standard, metals, load_regressor
 import pkg_resources
-from collections import deque
 
 kB=8.617333262e-5
 T=298.15

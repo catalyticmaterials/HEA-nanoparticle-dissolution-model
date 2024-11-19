@@ -2,8 +2,6 @@ from ase.db import connect
 import matplotlib.pyplot as plt
 import numpy as np
 from matplotlib.ticker import MultipleLocator
-from brokenaxes import brokenaxes
-from matplotlib.gridspec import GridSpec
 from mpl_toolkits.axes_grid1 import make_axes_locatable
 
 
@@ -81,10 +79,8 @@ axes[1,1].set_xlabel('k-points [k,k,1]')
 fig.add_subplot(111, frameon=False)
 # hide tick and tick label of the big axis
 plt.tick_params(labelcolor='none', which='both', top=False, bottom=False, left=False, right=False)
-# plt.xlabel("common X")
 plt.ylabel(r'$\Delta E(k) - \Delta E(k=8)$ [eV]',labelpad=20)
 
-# plt.tight_layout()
 plt.subplots_adjust(wspace=0.4,hspace=0.25)
 
 plt.savefig('convergence/kpoints.png',dpi=600,bbox_inches='tight')
@@ -115,7 +111,6 @@ with connect('convergence/Pt_ecut_out.db') as db, connect('convergence/Pt_ecut_b
         ax.set_xticks([200,250,300,350,400,450,500,600,700,800],['200','','300','','400','','500','600','700','800'])
 
         
-        # ax.yaxis.set_minor_locator(MultipleLocator(0.001))
         ax.minorticks_on()
         ax.xaxis.set_tick_params(which='minor', bottom=False)
 

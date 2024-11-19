@@ -1,7 +1,6 @@
 from ase.db import connect
-from ase.build import fcc111,fcc100, fcc211, surface, add_adsorbate
+from ase.build import fcc111,fcc100, fcc211, add_adsorbate
 from ase.constraints import FixAtoms
-from ase.visualize import view
 import numpy as np
 from copy import deepcopy
 

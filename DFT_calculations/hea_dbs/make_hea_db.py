@@ -1,6 +1,5 @@
 from ase.db import connect
-from ase.build import fcc111,fcc100, fcc211, surface, add_adsorbate
-from ase.visualize import view
+from ase.build import fcc111,fcc100, fcc211, add_adsorbate
 import numpy as np
 from copy import deepcopy
 from ase.constraints import FixAtoms
@@ -19,7 +18,7 @@ size=(3,3,5)
 
 
 for idx,f in enumerate(fs):
-    # print(f)
+
     symbols = np.random.choice(metals, size=np.prod(size), p=f, replace=True)
     a = np.mean([lattice_parameters[symbol] for symbol in symbols])
     
