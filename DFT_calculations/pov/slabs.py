@@ -1,11 +1,8 @@
 import numpy as np
-from ase.visualize import view
 from utilities import metals
 from utilities.colors import metal_colors
 from matplotlib.colors import to_rgb
-from ase.io import write, Trajectory
-from ase.data import covalent_radii, atomic_numbers
-from utilities.particle_dissolver import Dissolver
+from ase.io import write
 from ase.db import connect
 
 
@@ -21,13 +18,7 @@ def get_colors(atoms):
     return colors
 
 def povray_figure(atoms,name,rotation,bbox,colors):
-    # bbox_coord = np.max(np.abs(atoms.get_positions()))*1.4
-    # colors = get_colors(atoms)
-    
-    # if uc==1:
-    #     colors[40,3] = 0.75
 
-    # radii = r_Pt*len(atoms)
     povray_settings = {
         'display': False,  # Display while rendering
         'pause': True,  # Pause when done rendering (only if display)
