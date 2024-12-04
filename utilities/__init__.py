@@ -17,16 +17,6 @@ U_standard = {
 }
 
 
-# Standard reduction potentials with Cl from CRC handbook 97th edition (2016)
-U_standard_Cl = {
-    'Ag': {'n':1, 'U':0.22233},
-    'Au': {'n':3,'U':1.002},
-    'Ir':{'n':3,'U':0.77},
-    'Pd':{'n':2,'U':0.591},
-    'Pt':{'n':2,'U':0.755}, 
-    'Rh':{'n':3,'U':0.431},
-    'Ru':{'n':2,'U':0.455},
-}
 
 def load_regressor(model_path):
     
