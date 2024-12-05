@@ -22,7 +22,7 @@ diffs=[]
 E_diff=[]
 all_parameters = []
 for i,metal in enumerate(metals):
-    # print(metal)
+
     params = regressor.parameters[metal]
     all_parameters.append(params)
 
@@ -36,7 +36,7 @@ for i,metal in enumerate(metals):
     metal_U = metal_data[i+8]
 
     ax.scatter(cns,cn_params_U, marker=markers[i],color=metal_colors[metal],label=metal)
-    # ax.scatter(cns,cn_params, marker=markers[i],color=metal_colors[metal],label=metal)
+
     ax.scatter(cns,metal_U, marker=markers[i],alpha=0.6,color=metal_colors[metal])
 
     diffs.append(cn_params_U - metal_U)
@@ -154,7 +154,6 @@ E_surface_rels = []
 
 for i,metal in enumerate(metals):
 
-    # E_bulk_rel = E_bulk - E_bulk[i]
     E_surface_rel = E_surfaces['T111'] - E_surfaces['T111'][i]
     E_surface_rels.append(E_surface_rel)
 
@@ -185,7 +184,7 @@ ax.yaxis.set_minor_locator(MultipleLocator(0.25))
 plt.tight_layout()
 plt.subplots_adjust(top=0.9)
 axpos = ax.get_position()
-# plt.legend(handles, labels, ncol=6,loc='upper left')
+
 fig.legend(handles=h, labels=l,
            loc='outside upper center', ncols=8,fontsize=8,markerscale=1,mode='expand',bbox_to_anchor=(0.02, .5, 0.96, 0.5),fancybox=False)
 

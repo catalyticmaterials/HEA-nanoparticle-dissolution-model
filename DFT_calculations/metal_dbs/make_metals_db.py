@@ -77,7 +77,7 @@ with connect('metal_dbs/metals_dissolution.db') as db:
 		h = K.positions[3] - K.positions[6]
 		b[2] = -h[2]
 
-		# view(K)
+
 		K.set_cell(np.array([a_,b,c]))
 		
 

@@ -61,7 +61,7 @@ def check_surface(row,surface):
         a = atoms.get_cell()[0,0]/3
 
 
-    if np.any(dists>(tol*a)) and row.defect!='adatom':# and (surface!='Kink' or row.defect=='vacancy'):
+    if np.any(dists>(tol*a)) and row.defect!='adatom':
         return False
 
 
@@ -166,7 +166,7 @@ def get_nn_data_from_db(surface,n_neighbors,target_idx):
 
 
 
-# data fra T111
+# data from T111
 cn3 = get_nn_data_from_db('T111',3,45)
 cn9 = get_nn_data_from_db('T111',9,40)
 

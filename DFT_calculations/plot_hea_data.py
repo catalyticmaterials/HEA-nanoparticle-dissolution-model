@@ -30,7 +30,7 @@ for metal,ax in zip(metals,axes.flatten()):
     dE = metal_data[:,-3]
     CN = metal_data[:,-2]
 
-    # print(metal)
+
     for cn in CNs:
         CN_mask = cn==CN
         parts = ax.violinplot(dE[CN_mask],[cn],showextrema=False)
@@ -43,7 +43,7 @@ for metal,ax in zip(metals,axes.flatten()):
         s = np.std(dE[CN_mask])
 
         z = np.abs((dE[CN_mask]-mu)/s)
-        # print(cn)
+
         CN_data = metal_data[CN_mask]
 
 

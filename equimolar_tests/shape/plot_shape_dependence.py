@@ -52,7 +52,6 @@ fig.legend(handles=handles, labels=metals,
            loc='outside upper center', ncol=n_metals, mode='expand',bbox_to_anchor=(pos1.x0, .5, pos2.x1-pos1.x0, 0.5),fancybox=False)
 
 
-# plt.minorticks_off()
 
 
 plt.subplots_adjust(top=0.9)
@@ -69,7 +68,6 @@ for i,metal in enumerate(metals):
     axes[i].errorbar(range(len(N)),comp_diss[:,i],comp_diss_std[:,i],fmt='.',color=metal_colors[metal],capsize=5)
 
 
-# axes[1,0].set_xscale('log')
 
 axes[0].set_xticks(range(len(N)),labels=[1.0,1.1,1.2,1.3,1.4,1.5])
 axes[0].yaxis.set_minor_locator(MultipleLocator(0.05))
@@ -93,7 +91,7 @@ fig.legend(handles=handles, labels=metals,
            loc='outside upper center', ncol=n_metals, mode='expand',bbox_to_anchor=(pos1.x0, .5, pos2.x1-pos1.x0, 0.5),fancybox=False)
 
 
-# plt.minorticks_off()
+
 plt.subplots_adjust(top=0.9)
 plt.savefig('shape/shape_dependence_diss_comp.png',dpi=600)
 
@@ -110,10 +108,6 @@ ax.set_ylabel('$S_d$')
 
 
 ax.xaxis.set_major_locator(MultipleLocator(0.1))
-# ax.yaxis.set_major_locator(MultipleLocator(0.05))
 
-
-
-# plt.tight_layout()
 plt.savefig('shape/Sd_shape_dependence.png',dpi=600,bbox_inches='tight')
 

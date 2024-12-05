@@ -6,7 +6,7 @@ from matplotlib.lines import Line2D
 from matplotlib.ticker import MultipleLocator
 from matplotlib import rcParams
 
-# rcParams.update({'font.size': 16})
+
 n_metals = len(metals)
 
 data = np.loadtxt('size/size_dependence.csv',delimiter=',',skiprows=1)
@@ -51,7 +51,6 @@ fig.legend(handles=handles, labels=metals,
            loc='outside upper center', ncol=n_metals, mode='expand',bbox_to_anchor=(pos1.x0, .5, pos2.x1-pos1.x0, 0.5),fancybox=False)
 
 
-# plt.minorticks_off()
 
 
 plt.subplots_adjust(top=0.9)
@@ -68,7 +67,7 @@ for i,metal in enumerate(metals):
     axes[i].errorbar(range(len(N)),comp_diss[:,i],comp_diss_std[:,i],fmt='.',color=metal_colors[metal],capsize=5)
 
 
-# axes[1,0].set_xscale('log')
+
 
 axes[0].set_xticks(range(len(N)),labels=[1.8, 2.3, 2.8, 3.5, 4.0, 5.0])
 axes[0].yaxis.set_minor_locator(MultipleLocator(0.05))
@@ -92,7 +91,7 @@ fig.legend(handles=handles, labels=metals,
            loc='outside upper center', ncol=n_metals, mode='expand',bbox_to_anchor=(pos1.x0, .5, pos2.x1-pos1.x0, 0.5),fancybox=False)
 
 
-# plt.minorticks_off()
+
 plt.subplots_adjust(top=0.9)
 plt.savefig('size/size_dependence_diss_comp.png',dpi=600)
 
@@ -114,7 +113,6 @@ ax.set_xscale('log')
 ax.set_xticks(N,labels=[1.8, 2.3, 2.8, 3.5, 4.0, 5.0])
 
 plt.minorticks_off()
-# plt.tight_layout()
 plt.savefig('size/Sd_size_dependence.png',dpi=600,bbox_inches='tight')
 
 
@@ -135,8 +133,7 @@ n_samples_111 = np.ceil((norm_error_comp111/max_error)**2)
 n_samples_diss = np.ceil((norm_error_comp_diss/max_error)**2)
 ax2.plot(N,n_samples_111,label='$N_{samples}$(111)')
 ax2.plot(N,n_samples_diss,label='$N_{samples}$(diss.)')
-# ax2.set_yscale('log')
-# ax2.set_yticks([1,5,10,50,100],labels=[1,5,10,50,100])
+
 
 h1, l1 = ax.get_legend_handles_labels()
 h2, l2 = ax2.get_legend_handles_labels()
@@ -156,7 +153,6 @@ n_samples_df = np.ceil((df_std/max_sd_error)**2)
 ax4.plot(N,n_samples_df,label='$N_{samples}$',color='tab:green')
 ax4.set_ylabel(r'Nr. samples for SE $\leq 1$%')
 ax2.set_ylabel(r'Nr. samples for SE $\leq 5$%')
-# ax4.set_yticks([4,5,6,7])
 
 
 
@@ -170,7 +166,7 @@ ax4.yaxis.set_major_locator(MultipleLocator(5))
 ax4.yaxis.set_minor_locator(MultipleLocator(1))
 ax3.yaxis.set_major_locator(MultipleLocator(0.01))
 
-# plt.minorticks_off()
+
 plt.tight_layout()
 plt.savefig('size/size_required_samples.png',dpi=600)
 
