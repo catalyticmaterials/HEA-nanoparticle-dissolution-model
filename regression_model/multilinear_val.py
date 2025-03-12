@@ -124,21 +124,6 @@ partity_plot(U,preds_U,metal_feature,unit='V')
 
 plt.savefig('parity_plots/loocv_parity_V.png',dpi=600,bbox_inches='tight')
 
-dE_mask = dE>-0.5
-print('MAE for dE above -0.5 eV:',np.mean(np.abs(dE[dE_mask]-preds[dE_mask])))
-for i,metal in enumerate(metals):
-    metal_mask = metal_feature[:,i]==1
-    mask = metal_mask*dE_mask
-    print(metal,np.mean(np.abs(dE[mask]-preds[mask])))
-
-
-U_mask = ((U>=0.7)*(U<=0.9))*((preds_U>=0.7)*(preds_U<=0.9))
-print('MAE for calc and predicted Udiss between 0.7 and 0.9 V:',np.mean(np.abs(U[U_mask]-preds_U[U_mask])))
-for i,metal in enumerate(metals):
-    metal_mask = metal_feature[:,i]==1
-    mask = metal_mask*U_mask
-    print(metal,np.mean(np.abs(U[mask]-preds_U[mask])))
-
 
 
 
@@ -146,9 +131,6 @@ for i,metal in enumerate(metals):
 U_target = 0.8
 dissolve_true = U<U_target
 dissolve_pred = preds_U<U_target
-
-
-
 
 # Compute confusion matrix
 cm = confusion_matrix(dissolve_true, dissolve_pred)
