@@ -81,8 +81,8 @@ for i,metal in enumerate(metals):
     
 
 
-with open('../utilities/AgAuCuIrPdPtRhRu_multilinear.regressor','wb') as out:
-	pickle.dump(regressor,out)
+# with open('../utilities/AgAuCuIrPdPtRhRu_multilinear.regressor','wb') as out:
+# 	pickle.dump(regressor,out)
       
 
 
@@ -94,8 +94,7 @@ for i,metal in enumerate(metals):
 
 partity_plot(dE,preds,metal_feature)
 
-plt.tight_layout()
-plt.savefig('parity_plots/train_parity_eV.png',dpi=600)
+plt.savefig('parity_plots/train_parity_eV.png',dpi=600,bbox_inches='tight')
 
 
 preds = np.array(preds)
@@ -109,7 +108,6 @@ for i,metal in enumerate(metals):
 
 partity_plot(U,preds_U,metal_feature,unit='V')
 
-plt.tight_layout()
-plt.savefig('parity_plots/train_parity_V.png',dpi=600)
+plt.savefig('parity_plots/train_parity_V.png',dpi=600,bbox_inches='tight')
 
 

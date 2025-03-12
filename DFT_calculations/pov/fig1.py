@@ -19,12 +19,12 @@ def get_colors(atoms):
         colors[mask,:3] = [colors_dict[metal]]*np.sum(mask)
     return colors
 
-def povray_figure(atoms,name,rotation,uc):
+def povray_figure(atoms,name,rotation,uc,tp=None):
     # bbox_coord = np.max(np.abs(atoms.get_positions()))*1.4
     colors = get_colors(atoms)
     
-    if uc==1:
-        colors[40,3] = 0.75
+    if tp is not None:
+        colors[40,3] = tp
 
     # radii = r_Pt*len(atoms)
     povray_settings = {
@@ -71,8 +71,9 @@ db = connect('hea_dbs/T111_HEA.db')
 
 atoms = db.get_atoms(40)
 
-povray_figure(atoms,'T111_example','-60x',uc=1)
-
+povray_figure(atoms,'T111_example_tp','-60x',uc=1,tp=0.75)
+povray_figure(atoms,'T111_example','-60x',uc=1,tp=0.0)
+povray_figure(atoms,'T111_example_diss','-60x',uc=1,tp=1.0)
 
 del atoms[np.delete(np.arange(45),40)]
 

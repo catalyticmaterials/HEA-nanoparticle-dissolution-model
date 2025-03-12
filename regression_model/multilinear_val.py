@@ -2,9 +2,11 @@ from utilities import metals,U_diss
 import numpy as np
 from sklearn.linear_model import LinearRegression
 from sklearn.model_selection import LeaveOneOut
+from sklearn.metrics import confusion_matrix, precision_score, recall_score, accuracy_score
 import matplotlib.pyplot as plt
 from parity_plot import partity_plot
 from scipy.optimize import minimize
+
 
 n_metals = len(metals)
 data = np.loadtxt('../DFT_calculations/hea_data.csv',delimiter=',',skiprows=1)
@@ -103,9 +105,6 @@ for train_index,test_index in loo.split(features):
     preds.append(np.dot(X_test,params)[0])
 
 
-
-
-
 partity_plot(dE,preds,metal_feature,unit='eV')
 
 
@@ -125,4 +124,59 @@ partity_plot(U,preds_U,metal_feature,unit='V')
 
 plt.savefig('parity_plots/loocv_parity_V.png',dpi=600,bbox_inches='tight')
 
+dE_mask = dE>-0.5
+print('MAE for dE above -0.5 eV:',np.mean(np.abs(dE[dE_mask]-preds[dE_mask])))
+for i,metal in enumerate(metals):
+    metal_mask = metal_feature[:,i]==1
+    mask = metal_mask*dE_mask
+    print(metal,np.mean(np.abs(dE[mask]-preds[mask])))
 
+
+U_mask = ((U>=0.7)*(U<=0.9))*((preds_U>=0.7)*(preds_U<=0.9))
+print('MAE for calc and predicted Udiss between 0.7 and 0.9 V:',np.mean(np.abs(U[U_mask]-preds_U[U_mask])))
+for i,metal in enumerate(metals):
+    metal_mask = metal_feature[:,i]==1
+    mask = metal_mask*U_mask
+    print(metal,np.mean(np.abs(U[mask]-preds_U[mask])))
+
+
+
+
+# Plot confusion matrix
+U_target = 0.8
+dissolve_true = U<U_target
+dissolve_pred = preds_U<U_target
+
+
+
+
+# Compute confusion matrix
+cm = confusion_matrix(dissolve_true, dissolve_pred)
+tn, fp, fn, tp = cm.ravel()
+cm = np.array([[tp,fn],[fp,tn]])
+# Compute precision, recall and accuracy
+precision = precision_score(dissolve_true, dissolve_pred)
+recall = recall_score(dissolve_true, dissolve_pred)
+accuracy = accuracy_score(dissolve_true, dissolve_pred)
+
+# Plot confusion matrix using matplotlib cmap
+plt.figure(figsize=(4,4))
+plt.imshow(cm, interpolation='nearest', cmap=plt.cm.Blues)
+plt.title(f'$U_{{diss}}$ versus 0.8 V\nPrecision: {precision:.2f}, Recall: {recall:.2f}, Accuracy: {accuracy:.2f}',fontsize='medium')
+tick_marks = (0,1)
+tick_labels = ['Dissolved','Stable']
+plt.xticks(tick_marks, tick_labels)
+plt.yticks(tick_marks, tick_labels,rotation=90,va='center')
+
+# Annotate the confusion matrix
+thresh = cm.max() / 2.
+for i in range(cm.shape[0]):
+    for j in range(cm.shape[1]):
+        plt.text(j, i, format(cm[i, j], 'd'),
+                 horizontalalignment="center",
+                 color="white" if cm[i, j] > thresh else "black")
+
+plt.ylabel('DFT')
+plt.xlabel('Predicted')
+plt.tight_layout()
+plt.savefig('parity_plots/Confusion_matrix.png',dpi=600)
